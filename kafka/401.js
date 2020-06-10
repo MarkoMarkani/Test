@@ -1,16 +1,13 @@
 var kafka = require('kafka-node');
 var ffmpeg = require('fluent-ffmpeg');
-var rp = require("request-promise");
 const {
     v4: uuidv4
 } = require('uuid');
-//KAFKA METHODS
 
 var Producer = kafka.Producer,
-    //client = new kafka.KafkaClient(),
     client = new kafka.KafkaClient({
         kafkaHost: "217.172.12.192:9092"
-        //kafkaHost: "35.178.85.208:9094"
+        //kafkaHost: "35.178.85.208:9094" //this will be modified
 
     }),
     producer = new Producer(client);
@@ -19,7 +16,7 @@ var Consumer = kafka.Consumer,
     consumer = new Consumer(
         client,
         [{
-            topic: 'TOP401_IOT_PROPAGATE_EVENT', //PROMENITI U 401
+            topic: 'TOP401_IOT_PROPAGATE_EVENT', 
             offset: 0
         }],
         [{
@@ -68,10 +65,10 @@ consumer.on('offsetOutOfRange', function (err) {
 
 
 
-function sendRtmptoRtspKafka(StreamPath) {
-    let appServerAddress = process.argv[2].split(":")[0];
+function sendRtmptoRtspKafka(StreamPath, recordingName) {
+    //let appServerAddress = process.argv[2].split(":")[0];
     //console.log("ASA "+appServerAddress)
-   // console.log("This is stream path " + StreamPath);
+    // console.log("This is stream path " + StreamPath);
     let deviceIdName;
     let fullMessage2;
     let fullStringMessage2;
@@ -88,9 +85,9 @@ function sendRtmptoRtspKafka(StreamPath) {
 
         sessionId: ``,
 
-        streamUrl: `rtmp://${appServerAddress}:8002` + StreamPath,
+        streamUrl: `rtmp://127.0.0.1:8002` + StreamPath, //this will be dynamic
 
-        htmlUrl: ``,
+        htmlUrl: `C:/Users/marko.petrovic/Desktop/Svasta/VideoFajlovi/` + recordingName, //this will be dynamic
 
         platform: ``
 
@@ -130,20 +127,19 @@ function sendRtmptoRtspKafka(StreamPath) {
 
 
 
-//FFMPEG METHODS 
-function ffmpegConversionToMp4() {
-    
-    ffmpeg('rtmp://127.0.0.1:8002/app/live', {
+function ffmpegConversionToMp4(StreamPath) {
+
+    ffmpeg(`rtmp://127.0.0.1:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic
             timeout: 432000
         })
         .videoCodec('libx264')
         //.audioBitrate('128k')
         // .videoBitrate("500")
         .on('start', function (commandLine) {
-            recordingName=commandLine.split(" ")[6].split("/")[6];
+            recordingName = commandLine.split(" ")[6].split("/")[6];
             console.log(recordingName);
             console.log("Start has been triggered " + commandLine);
-            sendRtmptoRtspKafka(recordingName);//promenicemo
+            sendRtmptoRtspKafka(StreamPath, recordingName); //promenicemo
         })
         .on("progress", function (progress) {
             console.log('1.Frames: ' + progress.frames);
@@ -155,7 +151,7 @@ function ffmpegConversionToMp4() {
         })
         .on('codecData', function (data) {
             console.log('On codec data');
-            
+
         })
         .on('end', function () {
             console.log('file has ended converting succesfully');
@@ -163,12 +159,13 @@ function ffmpegConversionToMp4() {
         .on('error', function (err) {
             console.log('an error happened: ' + err.message);
         })
-        .save(`C:/Users/marko.petrovic/Desktop/Svasta/VideoFajlovi/${uuidv4()}.mp4`);
+        .save(`C:/Users/marko.petrovic/Desktop/Svasta/VideoFajlovi/${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic
 }
 
 
 
-//THIS WAS ONE OF PREVIOUS OPTIONS
+// this was one of the previous options
+
 // app.post('/api-sendRtspKafka', function (req, res) { 
 //     let reqBody;
 //     let fullMessage1;
@@ -216,7 +213,8 @@ function ffmpegConversionToMp4() {
 
 
 
-// THIS WAS ONE OF PREVIOUS OPTIONS
+// this was one of the previous options
+
 // function ffmpegConversion() {
 //     var two = ffmpeg('rtmp://127.0.0.1:8002/app/live', {
 //             timeout: 432000
@@ -251,7 +249,6 @@ function ffmpegConversionToMp4() {
 //         })
 //         .save('rtsp://127.0.0.1:8554/mystream');
 // }
-
 
 
 module.exports = {

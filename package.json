@@ -1,22 +1,22 @@
 {
-  "name": "openvidu-js-node",
+  "name": "con-project",
   "version": "2.11.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "test": "ng test",
-    "start": "nodemon server.js localhost:4443 MY_SECRET"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenVidu/openvidu-tutorials.git"
+    "url": "git+https://github.com/MarkoMarkani/test.git"
   },
-  "author": "openvidu@gmail.com",
+  "author": "marko",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/OpenVidu/openvidu-tutorials/issues"
+    
   },
-  "homepage": "https://github.com/OpenVidu/openvidu-tutorials#readme",
+  "homepage": "https://github.com/MarkoMarkani/tests#readme",
   "dependencies": {
     "body-parser": "1.18.3",
     "btoa": "^1.2.1",

@@ -16,12 +16,12 @@ var fullUrl;
 var gStreamPath;
 var gStreamId;
 // Environment variable: URL where our OpenVidu server is listening
-var OPENVIDU_URL = process.argv[2];
+//var OPENVIDU_URL = process.argv[2];
 // Environment variable: secret shared with our OpenVidu server
-var OPENVIDU_SECRET = process.argv[3];
+//var OPENVIDU_SECRET = process.argv[3];
 
 // Entrypoint to OpenVidu Node Client SDK
-var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+//var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
 var properties = {
     recordingMode: "ALWAYS", //RecordingMode.ALWAYS, // RecordingMode.ALWAYS for automatic recording
@@ -33,16 +33,16 @@ var mapSessionObject = {};
 var mapSessionObjectToken = {};
 //console.log("ARGV "+process.argv);
 
-let appServerAddress = process.argv[2].split(":")[0];
-console.log("ASA " + appServerAddress);
-console.log(`OV URL ${OPENVIDU_URL}`)
+//let appServerAddress = process.argv[2].split(":")[0];
+//console.log("ASA " + appServerAddress);
+//console.log(`OV URL ${OPENVIDU_URL}`)
 
 
 // Check launch arguments: must receive openvidu-server URL and the secret
-if (process.argv.length != 4) {
-    console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
-    process.exit(-1);
-}
+// if (process.argv.length != 4) {
+//     console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
+//     process.exit(-1);
+// }
 // For demo purposes we ignore self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 

@@ -58,3 +58,9 @@ typings/
 .env
 
 .vscode/
+
+#recordings folder
+.recordings/
+
+#logs folder
+./logs/

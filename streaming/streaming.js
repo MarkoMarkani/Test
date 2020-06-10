@@ -1,7 +1,7 @@
 module.exports = function () {
 
     let kafka401 = require('../kafka/401');
-    //kafka401();
+
     var RtspServer = require('rtsp-streaming-server').default;
     const rtspserver = new RtspServer({
         serverPort: 5554,
@@ -19,7 +19,7 @@ module.exports = function () {
             ping_timeout: 60
         },
         http: {
-            port: 8080,
+            port: 8081,
             allow_origin: '*'
         }
 
@@ -60,9 +60,10 @@ module.exports = function () {
 
     nms.on('prePublish', (id, StreamPath, args) => {
         console.log('[NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
-        //   ffmpegConversion();
-        kafka401.ffmpegConversionToMp4();
-        kafka401.sendRtmptoRtspKafka(StreamPath);
+      
+        kafka401.ffmpegConversionToMp4(StreamPath);
+        //kafka401.sendRtmptoRtspKafka(StreamPath);
+        
     });
 
     nms.on('postPublish', (id, StreamPath, args) => {

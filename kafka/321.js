@@ -5,13 +5,12 @@ module.exports = function () {
     const {
         v4: uuidv4
     } = require('uuid');
-    //KAFKA METHODS
 
     var Producer = kafka.Producer,
         //client = new kafka.KafkaClient(),
         client = new kafka.KafkaClient({
             kafkaHost: "217.172.12.192:9092"
-            //kafkaHost: "35.178.85.208:9094"
+            //kafkaHost: "35.178.85.208:9094" //this will be modified
 
         }),
         producer = new Producer(client);
@@ -42,8 +41,6 @@ module.exports = function () {
         let modifiedString;
         let stringMessage;
         let modifiedObject;
-        // message.value.id= "urn:ngsi-ld:TOP301_OBJECT_DETECT_DONE:035";
-        //message.value.marko="TOP301_OBJECT_DETECT_DONE";
         // console.log("THIS IS LOGGED MESSAGE "+JSON.stringify(message));
         // console.log("TYPE IS " + typeof message);
 
@@ -279,7 +276,7 @@ module.exports = function () {
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json"
             },
-            //uri: "http://localhost:1026/v2/entities?options=keyValues",
+            //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one
             uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
             resolveWithFullResponse: true,
             json: true,
@@ -293,12 +290,12 @@ module.exports = function () {
     }
 
 
-    //COMMENTED FOR NOW< WE DONT WANT NEW MESSAGES
+    // commented for now, we di not want new kafka messages
     //fiwareTest1();
 
 
 
-    //THIS IS AN EXAMPLE WITHOUT KEYVALUES
+    // example without the keyValues
     // function fiwareTest2() {
     //     const message = {
     //         // "id": "urn:ngsi-ld:TOP321_FACE_RECO_DONE:007", 
