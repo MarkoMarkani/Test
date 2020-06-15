@@ -227,12 +227,12 @@ module.exports = function () {
                     "mimeType": "video/mp4",
                     "attachDesc": "New face detection results",
                     "objectStoreId": "5eaad8e0a73040a68e7bb894",
-                    "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.797463390827179], \"class_names\": [\"Ronaldo\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
+                    "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.697463390827179], \"class_names\": [\"Ronaldo\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
                 }],
                 "description": "A face was detected"
             }
-        }
-
+        };
+  
         const stringMessage = JSON.stringify(message);
         //console.log(stringMessage)
         const modifiedString = stringMessage
@@ -264,7 +264,7 @@ module.exports = function () {
         }];
         producer.send(payloads, function (err, data) {
             if (err) {
-                console.log(err);
+                console.log(err); 
             }
             console.log("Kafka data " + JSON.stringify(data));
             console.log("Kafka Done");
@@ -294,7 +294,7 @@ module.exports = function () {
     fiwareTest1();       
 
 
-
+    
     // example without the keyValues   
     // function fiwareTest2() {
     //     const message = {
