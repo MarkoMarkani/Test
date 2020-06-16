@@ -13,14 +13,14 @@
   },
   "author": "marko",
   "license": "Apache-2.0",
-  "bugs": {
-    
-  },
+  "bugs": {},
   "homepage": "https://github.com/MarkoMarkani/tests#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "1.18.3",
     "btoa": "^1.2.1",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "4.16.4",
     "express-session": "1.16.1",
     "external-ip": "^2.1.1",
@@ -42,6 +42,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "rtsp-streaming-server": "^2.0.6",
+    "winston": "^3.2.1",
     "yarn": "^1.22.4"
   }
 }

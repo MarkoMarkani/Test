@@ -50,7 +50,7 @@ module.exports = function () {
         modifiedString = stringMessage
             .replace(/\\/g, "")
             .replace("\"{\"boxes", "{\"boxes")
-            .replace("cam-1\"}\"", "cam-1\"}")
+            .replace("cam-1\"}\"", "cam-1\"}") 
             .replace("\"body\":{", "")
             .replace("detected\"}", "detected\"")
             .replace("\"attachment\":[{", "")
@@ -91,13 +91,27 @@ module.exports = function () {
             json: true,
             body: modifiedObject
         };
+        const options1 = {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "Fiware-Service": "a4blue",
+                "Fiware-ServicePath": "/a4blueevents"
+            },
+            uri: "http://localhost:1026/v2/entities?options=keyValues",
+            // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+            resolveWithFullResponse: true,
+            json: true,
+            body: modifiedObject
+        };
         //}
         //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`)
 
         rp(options)
             .then(res => {
                 console.log(`Entity has been stored successfully`);
-
+                //console.log(res.headers.location.split("/"));
             })
             .catch(err => {
                 console.log(`Error is ${err}`);
@@ -146,7 +160,7 @@ module.exports = function () {
                 "sender": "OD",
                 "sentUtc": "2020-05-04 10:16:59.775156",
                 "status": "Test",
-                "msgType": "Update",
+                "msgType": "Update", 
                 "source": "VMS",
                 "scope": "Restricted",
                 "caseId": "44092dec-ebbb-44b5-b42b-6872f28c590d"
@@ -191,7 +205,7 @@ module.exports = function () {
             resolveWithFullResponse: true,
             json: true,
             body: modifiedObject
-        }
+        };
         //}
         //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`)
         rp(options)
@@ -206,6 +220,7 @@ module.exports = function () {
 
 
     function fiwareTest1() {
+        console.log("Sending...");
         const message = {
             // "id": "urn:ngsi-ld:TOP321_FACE_RECO_DONE:007", 
             // "type": "TOP321_FACE_RECO_DONE",
@@ -220,7 +235,7 @@ module.exports = function () {
                 "msgType": "Update",
                 "source": "VMS",
                 "scope": "Restricted",
-                "caseId": "44092dec-ebbb-44b5-b42b-6872f28c590d"
+                "caseId": "44092dec-ebbb-44b5-b42b-6872f28c590d" 
             },
             "body": {
                 "attachment": [{
@@ -248,7 +263,7 @@ module.exports = function () {
             .replace("scores\": [", "scores\": ")
             .replace("], \"class", ", \"class")
             .replace("class_names\": [", "class_names\":  ")
-            .replace("], \"classes_id", " , \"classes_id")
+            .replace("], \"classes_id", " , \"classes_id");
         //  .replace("ref_id\": [","ref_id\": ") 
         //  .replace("],\"description",", \"description");
 
@@ -263,7 +278,7 @@ module.exports = function () {
             timestamp: Date.now()
         }];
         producer.send(payloads, function (err, data) {
-            if (err) {
+            if (err) {    
                 console.log(err); 
             }
             console.log("Kafka data " + JSON.stringify(data));
@@ -273,7 +288,7 @@ module.exports = function () {
         const options = {
             method: "POST",
             headers: {
-                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Origin": "*", 
                 "Content-Type": "application/json"
             },
             //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one
@@ -281,7 +296,7 @@ module.exports = function () {
             resolveWithFullResponse: true,
             json: true,
             body: modifiedObject
-        }
+        };
         //}
         console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`);
         // rp(options)
@@ -291,8 +306,8 @@ module.exports = function () {
 
 
     // commented for now, we di not want new kafka messages
-    fiwareTest1();       
-
+    fiwareTest1();         
+   
 
     
     // example without the keyValues   
@@ -423,4 +438,4 @@ module.exports = function () {
     //     else {deviceIdName="cam-kostas";} 
     //     let fullBodyMessage = {
     //         deviceId: deviceIdName,
-}
+};
