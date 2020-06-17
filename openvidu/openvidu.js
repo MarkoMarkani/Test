@@ -179,7 +179,7 @@ function postFiware(bodyObject1) {
                 "Authorization": "Basic " + btoa("OPENVIDUAPP:MY_SECRET"),
                 "options": "keyValues"
             },
-            uri: "http://localhost:1026/v2/entities?options=keyValues", //217.172.12.192
+            uri: "http://localhost:1026/v2/entities?options=keyValues", //217.172.12.192  //modify
             resolveWithFullResponse: true,
             json: true,
             body: {
