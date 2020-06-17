@@ -11,14 +11,14 @@ app.use('/api/streaming', require('./streaming/streaming'));
 app.use(express.static(__dirname + '/public')); // Set the static files location //modify
 
 let PORT = config.port || 5001;
-
+//console.log(process.env)
 app.listen(PORT, function () {      
   logger.info(`App running on port ${PORT}`);
   console.log(`App running on port ${PORT}`);
 });
 
 
-
+//console.log(`${process.cwd()}\\public\\recordings\\`)
 
 //const axios = require('axios');
 //let https = require('https');

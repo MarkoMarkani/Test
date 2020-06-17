@@ -1,6 +1,8 @@
     const express = require('express');
     var kafka = require('kafka-node');
     var rp = require("request-promise");
+    let config=require(`../config/config`);
+    const serverIp=config.serverIp;  
     const {
         v4: uuidv4
     } = require('uuid');
@@ -12,7 +14,7 @@
             //kafkaHost: "35.178.85.208:9094" //this will be modified
 
         }),
-        producer = new Producer(client);
+        producer = new Producer(client);  
 
     var Consumer = kafka.Consumer,
         consumer = new Consumer(
@@ -85,7 +87,7 @@
                 "Fiware-Service": "a4blue",
                 "Fiware-ServicePath": "/a4blueevents"
             },
-            uri: "http://localhost:1026/v2/entities?options=keyValues", //modify
+            uri: `http://${serverIp}:1026/v2/entities?options=keyValues`, //modify
             // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
             resolveWithFullResponse: true,
             json: true,
@@ -110,7 +112,7 @@
                         "Fiware-Service": "a4blue",
                         "Fiware-ServicePath": "/a4blueevents"
                     },
-                    uri: `http://localhost:1026/v2/entities/${id}?options=keyValues`, //modify
+                    uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
                     // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
                     resolveWithFullResponse: true
                 };
@@ -121,7 +123,7 @@
                         "Fiware-Service": "a4blue",
                         "Fiware-ServicePath": "/a4blueevents"
                     },
-                    uri: `http://localhost:1026/v2/entities/${id}/raw`, //modify
+                    uri: `http://${serverIp}:1026/v2/entities/${id}/raw`, //modify
                     // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
                     resolveWithFullResponse: true
                 };
@@ -147,7 +149,9 @@
 
     
 
-
+    var ip = require("ip");
+    console.dir ( ip.address() );
+   // console.log(ip.address())
 
     //WE don't need this for now, but we will need it sometime when we create a new topic
 
@@ -240,7 +244,7 @@
                 "Content-Type": "application/json"
             },
             //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
-            uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
+            uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
             resolveWithFullResponse: true,
             json: true,
             body: modifiedObject

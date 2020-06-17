@@ -1,9 +1,10 @@
 var kafka = require('kafka-node');
 var ffmpeg = require('fluent-ffmpeg');
+let config=require(`../config/config`);
+const serverIp=config.serverIp;  
 const {
     v4: uuidv4
 } = require('uuid');
-
 var Producer = kafka.Producer,
     client = new kafka.KafkaClient({
         kafkaHost: "217.172.12.192:9092" //modify
@@ -85,9 +86,9 @@ function sendRtmptoRtspKafka(StreamPath, recordingName) {
 
         sessionId: ``,
 
-        streamUrl: `rtmp://127.0.0.1:8002` + StreamPath, //this will be dynamic
+        streamUrl: `rtmp://${serverIp}:8002` + StreamPath, //this will be dynamic
 
-        htmlUrl: `C:/Users/marko.petrovic/Desktop/Svasta/VideoFajlovi/` + recordingName, //this will be dynamic modify
+        htmlUrl: `${process.cwd()}\\recordings\\` + recordingName, //this will be dynamic modify 
 
         platform: ``
 
@@ -129,7 +130,7 @@ function sendRtmptoRtspKafka(StreamPath, recordingName) {
 
 function ffmpegConversionToMp4(StreamPath) {
 
-    ffmpeg(`rtmp://127.0.0.1:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic modify
+    ffmpeg(`rtmp://${serverIp}:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic modify
             timeout: 432000
         })
         .videoCodec('libx264')
@@ -159,7 +160,7 @@ function ffmpegConversionToMp4(StreamPath) {
         .on('error', function (err) {
             console.log('an error happened: ' + err.message);
         })
-        .save(`C:/Users/marko.petrovic/Desktop/Svasta/VideoFajlovi/${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic modify
+        .save(`${process.cwd()}\\recordings\\${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic modify
 }
 
 
