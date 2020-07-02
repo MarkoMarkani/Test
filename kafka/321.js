@@ -1,8 +1,8 @@
     const express = require('express');
     var kafka = require('kafka-node');
     var rp = require("request-promise");
-    let config=require(`../config/config`);
-    const serverIp=config.serverIp;  
+    let config = require(`../config/config`);
+    const serverIp = config.serverIp;
     const {
         v4: uuidv4
     } = require('uuid');
@@ -14,7 +14,7 @@
             //kafkaHost: "35.178.85.208:9094" //this will be modified
 
         }),
-        producer = new Producer(client);  
+        producer = new Producer(client);
 
     var Consumer = kafka.Consumer,
         consumer = new Consumer(
@@ -48,7 +48,7 @@
 
 
         stringMessage = message.value;
-        //console.log("STRING MESSAGE " + stringMessage);  
+        console.log("STRING MESSAGE " + stringMessage);  
         modifiedString = stringMessage
             .replace(/\\/g, "")
             .replace("\"{\"boxes", "{\"boxes")
@@ -96,46 +96,46 @@
 
         //}
         //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`)
-
+        if (modifiedObject.count===undefined){
         rp(options)
             .then(res => {
                 console.log(`Entity has been stored successfully`);
-                let id = res.headers.location.split("/")[3].split("?")[0];
-                return id;
+                // let id = res.headers.location.split("/")[3].split("?")[0];
+                // return id;
             })
-            .then((id) => {
-                console.log(id);
-                const optionsFiwareGetById = {
-                    method: "GET",
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Fiware-Service": "a4blue",
-                        "Fiware-ServicePath": "/a4blueevents"
-                    },
-                    uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
-                    // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
-                    resolveWithFullResponse: true
-                };
-                const optionsWebhookGetById = {
-                    method: "GET",
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Fiware-Service": "a4blue",
-                        "Fiware-ServicePath": "/a4blueevents"
-                    },
-                    uri: `http://${serverIp}:1026/v2/entities/${id}/raw`, //modify
-                    // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
-                    resolveWithFullResponse: true
-                };
-                return rp(optionsFiwareGetById);
-            })
-            .then((res) => {
-                console.log(`This is response body ${res.body}`);
-            })
+            // .then((id) => {
+            //     console.log(id);
+            //     const optionsFiwareGetById = {
+            //         method: "GET",
+            //         headers: {
+            //             "Access-Control-Allow-Origin": "*",
+            //             "Fiware-Service": "a4blue",
+            //             "Fiware-ServicePath": "/a4blueevents"
+            //         },
+            //         uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
+            //         // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+            //         resolveWithFullResponse: true
+            //     };
+            //     const optionsWebhookGetById = {
+            //         method: "GET",
+            //         headers: {
+            //             "Access-Control-Allow-Origin": "*",
+            //             "Fiware-Service": "a4blue",
+            //             "Fiware-ServicePath": "/a4blueevents"
+            //         },
+            //         uri: `http://${serverIp}:1026/v2/entities/${id}/raw`, //modify
+            //         // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+            //         resolveWithFullResponse: true
+            //     };
+            //     return rp(optionsFiwareGetById);
+            // })
+            // .then((res) => {
+            //     console.log(`This is response body ${res.body}`);
+            // })
             .catch(err => {
                 console.log(`Error is ${err}`);
             });
-
+        } else {console.log("Object has already been stored in Orion");}
         //will come back
     });
 
@@ -147,11 +147,11 @@
         // console.log('offsetOutOfRange:', err); will come back
     });
 
-    
+
 
     var ip = require("ip");
-    console.dir ( ip.address() );
-   // console.log(ip.address())
+    console.dir(ip.address());
+    // console.log(ip.address())
 
     //WE don't need this for now, but we will need it sometime when we create a new topic
 
@@ -244,7 +244,7 @@
                 "Content-Type": "application/json"
             },
             //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
-            uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+            uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
             resolveWithFullResponse: true,
             json: true,
             body: modifiedObject
@@ -257,22 +257,161 @@
     }
 
 
-    //kafka321Test();
+    //kafka321Test(); 
 
+ 
+    router.post('/perseoRule1', async (req, res) => {
 
-    router.post('/',async (req, res) => {
-            try {
-                // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
-                console.log("Perseo has been executed");
+        try {
+            let id = req.body.id;
+            console.log(id);
+            let count;
+            let modifiedKafkaMessage;
+            console.log("Perseo rule #1 has been executed");
+            const optionsFiwareGetById = {
+                method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Fiware-Service": "a4blue",
+                    "Fiware-ServicePath": "/a4blueevents"
+                },
+                uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
+                // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+                resolveWithFullResponse: true
+            };
+            let fiwareResponse = await rp(optionsFiwareGetById);
+            //This would print out the whole circular object
+            //console.log(fiwareResponse);
+            fiwareResponseBody = JSON.parse(fiwareResponse.body);
+            fiwareResponseBody.count = req.body.count;
+            count = fiwareResponseBody.count;
 
-                res.json(req.body);
-            } catch (err) {
-                console.error(err.message);
-                console.log(err);
-                res.status(500).send('Server Error');
+            switch (count) {
+                case "2":
+                    fiwareResponseBody.description = "Face has been recognized with possibility of 80%";
+                    break;
+                case "3":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 82%";
+                    break;
+                case "4":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 84%";
+                    break;
+                case "5":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 86%";
+                    break;
+                case "6":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 88%";
+                    break;
+                case "7":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 90%";
+                    break;
+                case "8":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 92%";
+                    break;
+                default:
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 100%";
             }
-        }
-    );
-    
 
+            modifiedKafkaMessage=JSON.stringify(fiwareResponseBody);
+            //console.log(modifiedKafkaMessage);
+            // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
+            payloads = [{
+                topic: "TOP321_FACE_RECO_DONE",
+                messages: modifiedKafkaMessage,
+                partition: 0,
+                timestamp: Date.now()
+            }];
+            producer.send(payloads, function (err, data) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log("Kafka data " + JSON.stringify(data));
+                console.log("Kafka Done");
+            });
+
+            res.json(req.body);
+        } catch (err) {
+            console.error(err.message);
+            // console.log(err);
+            res.status(500).send('Server Error');
+        }
+    });
+
+
+    router.post('/perseoRule2', async (req, res) => {
+
+        try {
+            let id = req.body.id;
+            console.log(id);
+            let count;
+            let modifiedKafkaMessage;
+            console.log("Perseo rule #2 has been executed");
+            const optionsFiwareGetById = {
+                method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Fiware-Service": "a4blue",
+                    "Fiware-ServicePath": "/a4blueevents"
+                },
+                uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
+                // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+                resolveWithFullResponse: true
+            };
+            let fiwareResponse = await rp(optionsFiwareGetById);
+            //This would print out the whole circular object
+            // console.log(fiwareResponse);
+            fiwareResponseBody = JSON.parse(fiwareResponse.body);
+            fiwareResponseBody.count = req.body.count;
+            count = fiwareResponseBody.count;
+
+            switch (count) {
+                case "2":
+                    fiwareResponseBody.description = "Face has been recognized with possibility of 80%";
+                    break;
+                case "3":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 82%";
+                    break;
+                case "4":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 84%";
+                    break;
+                case "5":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 86%";
+                    break;
+                case "6":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 88%";
+                    break;
+                case "7":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 90%";
+                    break;
+                case "8":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 92%";
+                    break;
+                default:
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 100%";
+            }
+
+            modifiedKafkaMessage=JSON.stringify(fiwareResponseBody);
+            // console.log(modifiedKafkaMessage);
+            // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
+            payloads = [{
+                topic: "TOP321_FACE_RECO_DONE",
+                messages: modifiedKafkaMessage,
+                partition: 0,
+                timestamp: Date.now()
+            }];
+            producer.send(payloads, function (err, data) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log("Kafka data " + JSON.stringify(data));
+                console.log("Kafka Done");
+            });
+
+            res.json(req.body);
+        } catch (err) {
+            console.error(err.message);
+          //  console.log(err);
+            res.status(500).send('Server Error');
+        }
+    });
     module.exports = router;

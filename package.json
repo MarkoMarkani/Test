@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MarkoMarkani/test.git"
+    "url": "git+https://github.com/MarkoMarkani/test.git"   
   },
   "author": "marko",
   "license": "Apache-2.0",
