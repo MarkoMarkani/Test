@@ -138,7 +138,8 @@ function ffmpegConversionToMp4(StreamPath) {
         // .videoBitrate("500")
         .on('start', function (commandLine) {
             recordingName = commandLine.split(" ")[6].split("/")[6];
-            console.log(recordingName);
+           // recordingName = commandLine.split(" ")[6].split("/")[7];    for Linux
+            console.log("This is recording name "+recordingName);
             console.log("Start has been triggered " + commandLine);
             sendRtmptoRtspKafka(StreamPath, recordingName); //promenicemo
         })
