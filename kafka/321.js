@@ -48,7 +48,7 @@
 
 
         stringMessage = message.value;
-        console.log("STRING MESSAGE " + stringMessage);  
+//        console.log("STRING MESSAGE " + stringMessage);   We will comment this for now 
         modifiedString = stringMessage
             .replace(/\\/g, "")
             .replace("\"{\"boxes", "{\"boxes")
@@ -78,7 +78,7 @@
         modifiedObject.id = "urn:ngsi-ld:TOP321_FACE_RECO_DONE:" + uuidv4();
         modifiedObject.type = "TOP321_FACE_RECO_DONE";
         modifiedObject.TimeInstant = new Date();
-        console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`);
+      //  console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); We will comment this for now
         const options = {
             method: "POST",
             headers: {
@@ -100,6 +100,7 @@
         rp(options)
             .then(res => {
                 console.log(`Entity has been stored successfully`);
+               console.log(res.statusCode);
                 // let id = res.headers.location.split("/")[3].split("?")[0];
                 // return id;
             })
@@ -196,6 +197,8 @@
                     "objectStoreId": "5eaad8e0a73040a68e7bb894",
                     "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.697463390827179], \"class_names\": [\"Ronaldo\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
                 }],
+//                "camLatitude": "20.000021", added by me
+  //              "camLongitude": "40.000001", added by me
                 "description": "A face was detected"
             }
         };
@@ -257,7 +260,7 @@
     }
 
 
-    //kafka321Test(); 
+  //  kafka321Test(); 
 
  
     router.post('/perseoRule1', async (req, res) => {
@@ -362,6 +365,8 @@
             // console.log(fiwareResponse);
             fiwareResponseBody = JSON.parse(fiwareResponse.body);
             fiwareResponseBody.count = req.body.count;
+            fiwareResponseBody.camLatitude = req.body.camLatitude;
+            fiwareResponseBody.camLongitude = req.body.camLongitude;
             count = fiwareResponseBody.count;
 
             switch (count) {
@@ -414,4 +419,87 @@
             res.status(500).send('Server Error');
         }
     });
+
+    router.post('/perseoRule3', async (req, res) => {
+
+        try {
+            let id = req.body.id;
+            console.log(id);
+            let count;
+            let modifiedKafkaMessage;
+            console.log("Perseo rule #3 has been executed");
+            const optionsFiwareGetById = {
+                method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Fiware-Service": "a4blue",
+                    "Fiware-ServicePath": "/a4blueevents"
+                },
+                uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
+                // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+                resolveWithFullResponse: true
+            };
+            let fiwareResponse = await rp(optionsFiwareGetById);
+            //This would print out the whole circular object
+            // console.log(fiwareResponse);
+            fiwareResponseBody = JSON.parse(fiwareResponse.body);
+            fiwareResponseBody.count = req.body.count;
+            fiwareResponseBody.camLatitude = req.body.camLatitude;
+            fiwareResponseBody.camLongitude = req.body.camLongitude;
+            count = fiwareResponseBody.count;
+
+            switch (count) {
+                case "2":
+                    fiwareResponseBody.description = "Face has been recognized with possibility of 80%";
+                    break;
+                case "3":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 82%";
+                    break;
+                case "4":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 84%";
+                    break;
+                case "5":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 86%";
+                    break;
+                case "6":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 88%";
+                    break;
+                case "7":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 90%";
+                    break;
+                case "8":
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 92%";
+                    break;
+                default:
+                    fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 100%";
+            }
+
+            modifiedKafkaMessage=JSON.stringify(fiwareResponseBody);
+            console.log("TO BE SENT "+modifiedKafkaMessage);
+            // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
+            payloads = [{
+                topic: "TOP321_FACE_RECO_DONE",
+                messages: modifiedKafkaMessage,
+                partition: 0,
+                timestamp: Date.now()
+            }];
+            producer.send(payloads, function (err, data) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log("Kafka data " + JSON.stringify(data));
+                console.log("Kafka Done");
+            });
+
+            res.json(req.body);
+        } catch (err) {
+            console.error(err.message);
+          //  console.log(err);
+            res.status(500).send('Server Error');
+        }
+    });
+
+
+
+
     module.exports = router;

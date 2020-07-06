@@ -29,7 +29,6 @@ var Consumer = kafka.Consumer,
         ]
     );
 
-
 producer.on('error', function (err) {
     console.log('Producer is in error state');
     console.log(err);
@@ -88,7 +87,7 @@ function sendRtmptoRtspKafka(StreamPath, recordingName) {
 
         streamUrl: `rtmp://${serverIp}:8002` + StreamPath, //this will be dynamic
 
-        htmlUrl: `${process.cwd()}\\recordings\\` + recordingName, //this will be dynamic modify 
+        htmlUrl: `${process.cwd()}/recordings/` + recordingName, //this will be dynamic modify 
 
         platform: ``
 
@@ -138,8 +137,9 @@ function ffmpegConversionToMp4(StreamPath) {
         // .videoBitrate("500")
         .on('start', function (commandLine) {
            // recordingName = commandLine.split(" ")[6].split("/")[6];
-            recordingName = commandLine.split(" ")[6].split("/")[7]; //   for Linux
-            console.log("This is recording name "+recordingName);
+      //      recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
+        recordingName=commandLine.split(" ")[6].split("/")[7]        
+        console.log("This is recording name "+recordingName);
             console.log("Start has been triggered " + commandLine);
             sendRtmptoRtspKafka(StreamPath, recordingName); //promenicemo
         })
@@ -161,7 +161,7 @@ function ffmpegConversionToMp4(StreamPath) {
         .on('error', function (err) {
             console.log('an error happened: ' + err.message);
         })
-        .save(`${process.cwd()}\\recordings\\${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic modify
+        .save(`${process.cwd()}/recordings/${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic modify
 }
 
 
