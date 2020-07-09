@@ -7,8 +7,8 @@ const {
 } = require('uuid');
 var Producer = kafka.Producer,
     client = new kafka.KafkaClient({
-        kafkaHost: "217.172.12.192:9092" //modify
-        //kafkaHost: "35.178.85.208:9094" //this will be modified
+//        kafkaHost: "217.172.12.192:9092" //modify
+        kafkaHost: "35.178.85.208:9094" //this will be modified
 
     }),
     producer = new Producer(client);
