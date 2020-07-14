@@ -321,7 +321,7 @@ router.post('/perseoRule1', async (req, res) => {
                 fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 90%, last seen on ${fiwareResponseBody.deviceId}`;
                 break;
             default:
-                fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 100%, last seen on ${fiwareResponseBody.deviceId}`;
+                fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 99%, last seen on ${fiwareResponseBody.deviceId}`;
         }
 
         modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
@@ -399,7 +399,7 @@ router.post('/perseoRule2', async (req, res) => {
                 fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 90%";
                 break;
             default:
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 100%";
+                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 99%";
         }
 
         modifiedKafkaMessage = JSON.stringify(fiwareResponseBody); 
