@@ -10,10 +10,10 @@ const router = express.Router();
 var Producer = kafka.Producer,
     //client = new kafka.KafkaClient(),
     client = new kafka.KafkaClient({
-        kafkaHost: "217.172.12.192:9092" //modify
-        //kafkaHost: "35.178.85.208:9094" //this will be modified
+       // kafkaHost: "217.172.12.192:9092" //modify
+        kafkaHost: "35.178.85.208:9094" //this will be modified
 
-    }),   
+    }),
     producer = new Producer(client);
 
 var Consumer = kafka.Consumer,
@@ -116,7 +116,7 @@ consumer.on('message', function (message) {
                 return rp(options2);
             })
             .then(res => {
-                console.log(`Entity has been stored successfully after receiving mesage from Kafka and modyfing it, status code is ${res.statusCode}`);
+                console.log(`Entity has been stored successfully after receiving mesage from Kafka and modifying it, status code is ${res.statusCode}`);
                 // let id = res.headers.location.split("/")[3].split("?")[0];
                 // return id;
             })
@@ -175,7 +175,7 @@ consumer.on('offsetOutOfRange', function (err) {
 //     partitions: 1,
 //     replicationFactor: 1
 // }];
-
+ 
 // client.createTopics(topicsToCreate, (error, result) => {
 //     if (error) {
 //         console.log(error);
@@ -184,7 +184,7 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
- 
+
 
 function kafka321Test() {
     console.log("Sending 321 test..");
@@ -209,7 +209,7 @@ function kafka321Test() {
                 "mimeType": "video/mp4",
                 "attachDesc": "New face detection results",
                 "objectStoreId": "5eaad8e0a73040a68e7bb894",
-                "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.697463390827179], \"class_names\": [\"Ronaldo\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
+                "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.907463390827179], \"class_names\": [\"Beckham\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
             }],
             //                "camLatitude": "20.000021", added by me
             //              "camLongitude": "40.000001", added by me
@@ -251,7 +251,7 @@ function kafka321Test() {
         }
         console.log("Kafka 321 Test data " + JSON.stringify(data));
     });
-    //OPTIONS WE ARE NOT CURRENTLY USING
+    //options we are not currently using
     const options = {
         method: "POST",
         headers: {
@@ -272,15 +272,26 @@ function kafka321Test() {
 }
 
 
-kafka321Test();
+
 
 
 router.post('/perseoRule1', async (req, res) => {
     let id = req.body.id;
-    //console.log(id);
     let count;
     let modifiedKafkaMessage;
-    
+
+    const optionsGetAll321Entities = {
+        method: "GET",
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Fiware-Service": "a4blue",
+            "Fiware-ServicePath": "/a4blueevents"
+        },
+        uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
+
+        resolveWithFullResponse: true
+    };
+
     const optionsFiwareGetById = {
         method: "GET",
         headers: {
@@ -294,14 +305,37 @@ router.post('/perseoRule1', async (req, res) => {
     };
     try {
         console.log("Perseo rule #1 has been executed");
-        let fiwareResponse = await rp(optionsFiwareGetById);
-        //This would print out the whole circular object
-        //console.log(fiwareResponse);
-        fiwareResponseBody = JSON.parse(fiwareResponse.body);
+        let fiwareResponse2 = await rp(optionsFiwareGetById);
+        const {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        } = JSON.parse(fiwareResponse2.body);
+        let fiwareResponseBody = {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        };
         fiwareResponseBody.count = req.body.count;
         count = fiwareResponseBody.count;
 
-        switch (count) {     
+        switch (count) {
             case "2":
                 fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 80%, last seen on ${fiwareResponseBody.deviceId}`;
                 break;
@@ -325,8 +359,7 @@ router.post('/perseoRule1', async (req, res) => {
         }
 
         modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-        //console.log(modifiedKafkaMessage);
-        // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
+        //console.log("TO BE SENT " + modifiedKafkaMessage);
         payloads = [{
             topic: "TOP321_FACE_RECO_DONE",
             messages: modifiedKafkaMessage,
@@ -343,68 +376,90 @@ router.post('/perseoRule1', async (req, res) => {
         res.json(req.body);
     } catch (err) {
         console.error(err.message);
-        // console.log(err);
         res.status(500).send('Server Error');
     }
 });
 
 
 router.post('/perseoRule2', async (req, res) => {
+    let dateNow = new Date();
+    let dateMinus1Day = new Date(dateNow.setHours(dateNow.getHours() - 2));
     let id = req.body.id;
-    //console.log(id);
-    //console.log(req.body);
     let count;
     let modifiedKafkaMessage;
-    
-    const optionsFiwareGetById = {
+
+    const optionsGetAll321Entities = {
         method: "GET",
         headers: {
-            "Access-Control-Allow-Origin": "*", 
+            "Access-Control-Allow-Origin": "*",
             "Fiware-Service": "a4blue",
             "Fiware-ServicePath": "/a4blueevents"
         },
-        uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues&limit=1000`, //modify
-        // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
+        uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
+
         resolveWithFullResponse: true
     };
+
+
     try {
         console.log("Perseo rule #2 has been executed");
-        let fiwareResponse = await rp(optionsFiwareGetById);
-        //This would print out the whole circular object
-        // console.log(fiwareResponse);
-        fiwareResponseBody = JSON.parse(fiwareResponse.body);
-        //I will check this, added undefined instead od camLat and camLon
+
+        let fiwareResponse1 = await rp(optionsGetAll321Entities);
+        let allEntities = JSON.parse(fiwareResponse1.body);
+
+        let latestEntity=allEntities.filter(entity=>entity.id===req.body.id).map(entity=>entity)[0]; 
+
+        let allEntitiesInLast1Day = allEntities.filter(entity => new Date(entity.TimeInstant) > dateMinus1Day && entity.camLatitude > req.body.minLatitude && entity.camLatitude < req.body.maxLatitude && entity.camLongitude > req.body.minLongitude && entity.camLongitude < req.body.maxLongitude && entity.scores > req.body.minScores && entity.scores < req.body.maxScores && req.body.class_names.includes(entity.class_names.toString()));
+        let MsgIdsInLast1Day = allEntitiesInLast1Day.map(entities => entities.header.msgId);
+        let timeInstant1Day = allEntitiesInLast1Day.map(entity => entity.TimeInstant);
+        let deviceIdsLast1Day = allEntitiesInLast1Day.map(entity => entity.deviceId);
+        let recognitionsLast1Day = allEntitiesInLast1Day.map(entity => [entity.deviceId, entity.TimeInstant, entity.class_names]);
+
+        let fiwareResponseBodyMsgId = latestEntity.header.msgId;
+        const {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        } = latestEntity;
+        let fiwareResponseBody = {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        };
+        fiwareResponseBody.msgId = fiwareResponseBodyMsgId;
         fiwareResponseBody.count = req.body.count;
         fiwareResponseBody.camLatitude = undefined;
-        fiwareResponseBody.camLongitude = undefined; 
-        count = fiwareResponseBody.count;
+        fiwareResponseBody.camLongitude = undefined;
 
-        switch (count) {
-            case "2":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 80%";
-                break;  
-            case "3":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 82%";
-                break;
-            case "4":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 84%";
-                break;
-            case "5":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 86%";
-                break;
-            case "6":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 88%";
-                break;
-            case "7":
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 90%";
-                break;
-            default:
-                fiwareResponseBody.description = "Rule#2 Alert! Face has been recognized with possibility of 99%";
+        fiwareResponseBody.description = `Rule#2 Alert! Face has been spotted more than one time within last 24 hours`; //, at locations ${filterDeviceIds}
+        fiwareResponseBody.deviceId = deviceIdsLast1Day;
+        fiwareResponseBody.timestamp_processing = timeInstant1Day;
+        fiwareResponseBody.recognitions = recognitionsLast1Day;
+        fiwareResponseBody.msgs = MsgIdsInLast1Day;
+
+
+        modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
+        if (fiwareResponseBody.timestamp_processing.length > 1) {
+            console.log("TO BE SENT AFTER PROCESSING " + modifiedKafkaMessage);
+        } else {
+            console.log("Count is less than 2");
         }
-
-        modifiedKafkaMessage = JSON.stringify(fiwareResponseBody); 
-       // console.log(modifiedKafkaMessage);
-        // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
         payloads = [{
             topic: "TOP321_FACE_RECO_DONE",
             messages: modifiedKafkaMessage,
@@ -421,32 +476,19 @@ router.post('/perseoRule2', async (req, res) => {
         res.json(req.body);
     } catch (err) {
         console.error(err.message);
-        //  console.log(err);
         res.status(500).send('Server Error');
     }
 });
 
+//kafka321Test();     
 
 router.post('/perseoRule3', async (req, res) => {
-    let allEntities;
-    let allTimeInstants;
-    let dateNow = new Date();
+    let dateNow = new Date();  
     let dateMinus1Hour = new Date(dateNow.setHours(dateNow.getHours() - 1));
     let dateMinus3Hours = new Date(dateNow.setHours(dateNow.getHours() - 3));
     let dateMinus6Hours = new Date(dateNow.setHours(dateNow.getHours() - 6));
-    let filter1Hour;
-    let filter3Hours;
-    let filter6Hours;
-    let filterCamLatitudes;
-    let filterCamLongitudes;
-    let modifiedKafkaMessage;
-    let allDeviceIds;
-    let filterDeviceIds;
-    let id = req.body.id;
-    //console.log(id);
-    //console.log(req.body);
-
-    const optionsGetAll321Entities = {
+    // console.log(req.body.class_names_group[0]);
+    const optionsGetAll321Entities = {   
         method: "GET",
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -454,68 +496,103 @@ router.post('/perseoRule3', async (req, res) => {
             "Fiware-ServicePath": "/a4blueevents"
         },
         uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
-        // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725", 
+
         resolveWithFullResponse: true
     };
-
-    const optionsFiwareGetById = {
-        method: "GET",
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Fiware-Service": "a4blue",
-            "Fiware-ServicePath": "/a4blueevents"
-        },
-        uri: `http://${serverIp}:1026/v2/entities/${id}?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
-        // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
-        resolveWithFullResponse: true
-    };
-
-
 
     try {
         console.log("Perseo rule #3 has been executed");
 
         let fiwareResponse1 = await rp(optionsGetAll321Entities);
-        allEntities = JSON.parse(fiwareResponse1.body);
+        let allEntities = JSON.parse(fiwareResponse1.body);
+        //console.log(allEntities);
+        let classNames = Object.values(req.body.class_names_group);
+        //console.log(classNames);
+        let latestEntity=allEntities.filter(entity=>entity.id===req.body.id).map(entity=>entity)[0];
+        console.log(latestEntity);
 
-        allTimeInstants = allEntities.map(entity => entity.TimeInstant);
-        allCamLatitudes = allEntities.map(entity => entity.camLatitude);
-        allCamLongitudes = allEntities.map(entity => entity.camLongitude);
-        allDeviceIds = allEntities.map(entity => entity.deviceId);
+        let allEntitiesInLast1Hour = allEntities.filter(entity => new Date(entity.TimeInstant) > dateMinus1Hour && entity.camLatitude > req.body.minLatitude && entity.camLatitude < req.body.maxLatitude && entity.camLongitude > req.body.minLongitude && entity.camLongitude < req.body.maxLongitude && classNames.includes(entity.class_names.toString()));
+        let allEntitiesInLast3Hours = allEntities.filter(entity => new Date(entity.TimeInstant) > dateMinus3Hours && entity.camLatitude > req.body.minLatitude && entity.camLatitude < req.body.maxLatitude && entity.camLongitude > req.body.minLongitude && entity.camLongitude < req.body.maxLongitude && classNames.includes(entity.class_names.toString()));
+        let allEntitiesInLast6Hours = allEntities.filter(entity => new Date(entity.TimeInstant) > dateMinus6Hours && entity.camLatitude > req.body.minLatitude && entity.camLatitude < req.body.maxLatitude && entity.camLongitude > req.body.minLongitude && entity.camLongitude < req.body.maxLongitude && classNames.includes(entity.class_names.toString()));
 
-        // console.log(allTimeInstants);
-        formattedTimeInstant = allTimeInstants.map(oneTimeInstant => new Date(oneTimeInstant));
-        filter1Hour = allTimeInstants.filter(timeInstant => new Date(timeInstant) > dateMinus1Hour); //and position
-        filter3Hours = allTimeInstants.filter(timeInstant => new Date(timeInstant) > dateMinus3Hours); //and position
-        filter6Hours = allTimeInstants.filter(timeInstant => new Date(timeInstant) > dateMinus6Hours); //and position && new Date(timeInstant) < dateMinus1Hour
-        filterCamLatitudes = allCamLatitudes.filter(camLatitude => camLatitude > req.body.minLatitude && camLatitude < req.body.maxLatitude);
-        filterCamLongitudes = allCamLongitudes.filter(camLongitude => camLongitude > req.body.minLongitude && camLongitude < req.body.maxLongitude);
-        //filterDeviceIds=allDeviceIds.filter(deviceId => camLongitude > req.body.minLongitude && camLongitude < req.body.maxLongitude);
-        filterDeviceIds = [...new Set(allDeviceIds)]
-        //console.log(filterDeviceIds)
-        // console.log(filter1Hour.length);
-        // console.log(filter3Hours.length);
-        // console.log(filter6Hours.length);
+        let MsgIdsInLast1Hour = allEntitiesInLast1Hour.map(entities => entities.header.msgId);
+        let MsgIdsInLast3Hours = allEntitiesInLast3Hours.map(entities => entities.header.msgId);
+        let MsgIdsInLast6Hours = allEntitiesInLast6Hours.map(entities => entities.header.msgId);
 
-        let fiwareResponse2 = await rp(optionsFiwareGetById);
-        fiwareResponseBody = JSON.parse(fiwareResponse2.body);
+        let timeInstant1Hour = allEntitiesInLast1Hour.map(entities => entities.TimeInstant); //and position
+        let timeInstant3Hours = allEntitiesInLast3Hours.map(entities => entities.TimeInstant); //and position
+        let timeInstant6Hours = allEntitiesInLast6Hours.map(entities => entities.TimeInstant);
+
+        let deviceIdsLast1Hour = allEntitiesInLast1Hour.map(entity => entity.deviceId);
+        let deviceIdsLast3Hours = allEntitiesInLast3Hours.map(entity => entity.deviceId);
+        let deviceIdsLast6Hours = allEntitiesInLast6Hours.map(entity => entity.deviceId);
+
+        let classNames1Hour = allEntitiesInLast1Hour.map(entities => entities.class_names);
+        let classNames3Hours = allEntitiesInLast3Hours.map(entities => entities.class_names);
+        let classNames6Hours = allEntitiesInLast6Hours.map(entities => entities.class_names);
+
+        let recognitionsLast1Hour = allEntitiesInLast1Hour.map(entity => [entity.deviceId, entity.TimeInstant, entity.class_names]);
+        let recognitionsLast3Hours = allEntitiesInLast3Hours.map(entity => [entity.deviceId, entity.TimeInstant, entity.class_names]);
+        let recognitionsLast6Hours = allEntitiesInLast6Hours.map(entity => [entity.deviceId, entity.TimeInstant, entity.class_names]);
+
+
+        let fiwareResponseBodyMsgId = latestEntity.header.msgId;
+        const {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        } = latestEntity;
+        let fiwareResponseBody = {
+            id,
+            type,
+            TimeInstant,
+            attachDesc,
+            class_names,
+            classes_id,
+            description,
+            deviceId,
+            timestamp_processing,
+            scores,
+            suspect_description
+        };
+        fiwareResponseBody.msgId = fiwareResponseBodyMsgId;
         fiwareResponseBody.count = req.body.count;
         fiwareResponseBody.camLatitude = undefined;
         fiwareResponseBody.camLongitude = undefined;
-        // count = fiwareResponseBody.count;
-        if (filter1Hour.length > 3 && filterCamLatitudes && filterCamLongitudes && filterDeviceIds) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than three times within last hour, time spotted: ${filter1Hour}`;//, at locations ${filterDeviceIds}
-        } else if (filter3Hours.length > 6 && filterCamLatitudes && filterCamLongitudes && filterDeviceIds ) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than six times since last three hours, time spotted: ${filter3Hours}`;
-        } else if (filter6Hours.length > 9 && filterCamLatitudes && filterCamLongitudes && filterDeviceIds ) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than nine times since last six hours, time spotted: ${filter6Hours}`;
+        console.log(allEntitiesInLast1Hour.length)
+        if (allEntitiesInLast1Hour.length > 3) {
+            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than three times within last hour`; //, at locations ${filterDeviceIds}
+            fiwareResponseBody.deviceId = deviceIdsLast1Hour;
+            fiwareResponseBody.timestamp_processing = timeInstant1Hour;
+            fiwareResponseBody.recognitions = recognitionsLast1Hour;
+            fiwareResponseBody.msgs = MsgIdsInLast1Hour;
+        } else if (allEntitiesInLast3Hours.length > 6) {
+            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than six times since last three hours`;
+            fiwareResponseBody.deviceId = deviceIdsLast3Hours;
+            fiwareResponseBody.timestamp_processing = timeInstant3Hours;
+            fiwareResponseBody.recognitions = recognitionsLast3Hours;
+            fiwareResponseBody.msgs = MsgIdsInLast3Hours;
+        } else if (allEntitiesInLast6Hours.length > 9) {
+            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than nine times since last six hours`;
+            fiwareResponseBody.deviceId = deviceIdsLast6Hours;
+            fiwareResponseBody.timestamp_processing = timeInstant6Hours;
+            fiwareResponseBody.recognitions = recognitionsLast6Hours;
+            fiwareResponseBody.msgs = MsgIdsInLast6Hours;
+        } else {
+            console.log("Not fullfilled");
         }
 
+        let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
+        console.log("TO BE SENT AFTER PROCESSING " + modifiedKafkaMessage);
 
-        modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-        //console.log(filter1Hour.length);
-        //console.log("TO BE SENT AFTER PROCESSING " + modifiedKafkaMessage);
-        // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
         payloads = [{
             topic: "TOP321_FACE_RECO_DONE",
             messages: modifiedKafkaMessage,
@@ -532,7 +609,6 @@ router.post('/perseoRule3', async (req, res) => {
         res.json(req.body);
     } catch (err) {
         console.error(err.message);
-        //  console.log(err);
         res.status(500).send('Server Error');
     }
 });
@@ -543,7 +619,7 @@ router.post('/perseoRule3', async (req, res) => {
 router.post('/addNewCamera', async (req, res) => {
     console.log(req.body);
     try {
-        let id = req.body.id;
+        let id = `urn:ngsi-ld:IP_Camera:${req.body.id}`;
         console.log(`Post request from CC to add an new camera has been sent with an id of ${id}`);
         const options = {
             method: "POST",
@@ -556,7 +632,12 @@ router.post('/addNewCamera', async (req, res) => {
             uri: `http://${serverIp}:1026/v2/entities?type=IP_Camera&options=keyValues`, //modify
             // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
             json: true,
-            body: req.body,
+            body: {
+                id: id,
+                type: req.body.type,
+                camLatitude: req.body.camLatitude,
+                camLongitude: req.body.camLongitude
+            },
             resolveWithFullResponse: true
         };
         let response = await rp(options);
@@ -566,7 +647,7 @@ router.post('/addNewCamera', async (req, res) => {
             console.log(`Camera with that id already exists in Orion, status code ${response.statusCode}`);
         }
         console.log(`Status code is ${response.statusCode}`);
-        res.json();
+        res.json(response);
 
     } catch (err) {
         console.error(err.message);
@@ -628,37 +709,6 @@ async function addperseoRuleSecond() {
 //addperseoRuleSecond();
 
 
-//not using this for now
-
-async function addOrionEntityCamera() {
-    const options = {
-        method: "POST",
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-            "Fiware-Service": "a4blue",
-            "Fiware-ServicePath": "/a4blueevents"
-        },
-        uri: `http://${serverIp}:1026/v2/entities?type=IP_Camera&options=keyValues&limit=1000`, //modify
-        // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725", 
-        json: true,
-        body: {
-            "id": "urn:ngsi-ld:IP_Camera:cam-1",
-            "type": "IP_Camera",
-            "camLatitude": "20.000001",
-            "camLongitude": "40.000001",
-        },
-        resolveWithFullResponse: true
-    };
-
-    let res = await rp(options);
-    if (res.statusCode === 201) {
-        console.log(`Orion Camera Entity has been triggered with status code ${res.statusCode}`);
-    }
-
-}
-
-//addOrionEntityCamera();
 
 //not using this for now
 async function getOrionEntityCamera() {
@@ -734,87 +784,6 @@ async function getAllFaceEntities() {
         console.log(err.message);
     }
 }
-
-//getAllFaceEntities();
-
-
-//previous version
-
-// router.post('/perseoRule3', async (req, res) => {
-//     let id = req.body.id;
-//     console.log(id);
-//     console.log(req.body);
-//     let count;
-//     let modifiedKafkaMessage;
-//     const optionsFiwareGetById = {
-//         method: "GET",
-//         headers: {
-//             "Access-Control-Allow-Origin": "*",
-//             "Fiware-Service": "a4blue",
-//             "Fiware-ServicePath": "/a4blueevents"
-//         },
-//         uri: `http://${serverIp}:1026/v2/entities/${id}?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
-//         // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c", 
-//         resolveWithFullResponse: true
-//     };
-//     try {
-//         console.log("Perseo rule #3 has been executed");
-//         let fiwareResponse = await rp(optionsFiwareGetById);
-//         //This would print out the whole circular object
-//         // console.log(fiwareResponse);
-//         fiwareResponseBody = JSON.parse(fiwareResponse.body);
-//         fiwareResponseBody.count = req.body.count;
-//         fiwareResponseBody.camLatitude = undefined;
-//         fiwareResponseBody.camLongitude = undefined;
-//         count = fiwareResponseBody.count;
-
-//         switch (count) {
-//             case "2":
-//                 fiwareResponseBody.description = "Face has been recognized with possibility of 80%";
-//                 break;
-//             case "3":
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 82%";
-//                 break;
-//             case "4":
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 84%";
-//                 break;
-//             case "5":
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 86%";
-//                 break;
-//             case "6":
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 88%";
-//                 break;
-//             case "7":
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 90%";
-//                 break;
-//             default:
-//                 fiwareResponseBody.description = "Alert! Face has been recognized with possibility of 100%";
-//         }
-
-//         modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-//         console.log("TO BE SENT AFTER PROCESSING " + modifiedKafkaMessage);
-//         // console.log("Here is request: " + JSON.stringify(req.body) + " " + typeof req.body);
-//         payloads = [{
-//             topic: "TOP321_FACE_RECO_DONE",
-//             messages: modifiedKafkaMessage,
-//             partition: 0,
-//             timestamp: Date.now()
-//         }];
-//         producer.send(payloads, function (err, data) {
-//             if (err) {
-//                 console.log(err);
-//             }
-//             console.log("Kafka data " + JSON.stringify(data));
-//             console.log("Kafka Done");
-//         });
-
-//         res.json(req.body);
-//     } catch (err) {
-//         console.error(err.message);
-//         //  console.log(err);
-//         res.status(500).send('Server Error');
-//     }
-// });
 
 
 module.exports = router;
