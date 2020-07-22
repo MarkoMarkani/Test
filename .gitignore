@@ -60,7 +60,7 @@ typings/
 .vscode/
 
 #recordings folder
-.recordings/
+recordings/
 
 #logs folder
-./logs/
+logs/
