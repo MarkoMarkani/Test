@@ -2,13 +2,14 @@ var kafka = require('kafka-node');
 var ffmpeg = require('fluent-ffmpeg');
 let config=require(`../config/config`);
 const serverIp=config.serverIp;  
+const awsIp=config.awsIp;
 const {
     v4: uuidv4
 } = require('uuid');
 var Producer = kafka.Producer,
     client = new kafka.KafkaClient({
 //        kafkaHost: "217.172.12.192:9092" //modify
-        kafkaHost: "35.178.85.208:9094" //this will be modified
+        kafkaHost: `${awsIp}:9094` //this will be modified
 
     }),
     producer = new Producer(client);
@@ -65,7 +66,7 @@ consumer.on('offsetOutOfRange', function (err) {
 
 
 
-function sendRtmptoRtspKafka(StreamPath, recordingName) {
+function sendRtmptoRtspKafka(StreamPath, recordingName,streamStatus) {
     //let appServerAddress = process.argv[2].split(":")[0];
     //console.log("ASA "+appServerAddress)
     // console.log("This is stream path " + StreamPath);
@@ -83,13 +84,13 @@ function sendRtmptoRtspKafka(StreamPath, recordingName) {
 
         deviceId: deviceIdName,
 
-        sessionId: ``,
+        streamStatus: streamStatus ? "ENDED" : "STARTED",
 
         streamUrl: `rtmp://${serverIp}:8002` + StreamPath, //this will be dynamic
 
-        htmlUrl: `${process.cwd()}/recordings/` + recordingName, //this will be dynamic modify 
+        recordingPath: recordingName ? `${process.cwd()}/recordings/` + recordingName : "Not available yet", //this will be dynamic modify 
 
-        platform: ``
+        platform: `Body worn camera`
 
     };
     fullMessage2 = {
@@ -127,8 +128,8 @@ function sendRtmptoRtspKafka(StreamPath, recordingName) {
 
 
 
-function ffmpegConversionToMp4(StreamPath) {
-
+function ffmpegConversionToMp4(StreamPath,streamStatus) {
+let recordingName;
     ffmpeg(`rtmp://${serverIp}:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic modify
             timeout: 432000
         })
@@ -141,7 +142,7 @@ function ffmpegConversionToMp4(StreamPath) {
         recordingName=commandLine.split(" ")[6].split("/")[7]        
         console.log("This is recording name "+recordingName);
             console.log("Start has been triggered " + commandLine);
-            sendRtmptoRtspKafka(StreamPath, recordingName); //promenicemo
+            sendRtmptoRtspKafka(StreamPath, null,streamStatus); //promenicemo
         })
         .on("progress", function (progress) {
             console.log('1.Frames: ' + progress.frames);
@@ -157,6 +158,8 @@ function ffmpegConversionToMp4(StreamPath) {
         })
         .on('end', function () {
             console.log('file has ended converting succesfully');
+            streamStatus=true;
+            sendRtmptoRtspKafka(StreamPath, recordingName,streamStatus);
         })
         .on('error', function (err) {
             console.log('an error happened: ' + err.message);
