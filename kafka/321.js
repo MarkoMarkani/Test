@@ -9,10 +9,9 @@ const {
 } = require('uuid');
 const router = express.Router();
 var Producer = kafka.Producer,
-    //client = new kafka.KafkaClient(),
-    client = new kafka.KafkaClient({
-        // kafkaHost: "217.172.12.192:9092" //modify
-        kafkaHost: `${awsIp}:9094` //this will be modified
+    client = new kafka.KafkaClient({ 
+        // kafkaHost: "217.172.12.192:9092" 
+        kafkaHost: `${awsIp}:9092` 
 
     }),
     producer = new Producer(client);
@@ -21,7 +20,7 @@ var Consumer = kafka.Consumer,
     consumer = new Consumer(
         client,
         [{
-            topic: 'TOP321_FACE_RECO_EVENT', //PROMENITI U 401
+            topic: 'TOP321_FACE_RECO_EVENT', 
             offset: 0
         }],
         [{
@@ -77,7 +76,7 @@ consumer.on('message', function (message) {
     modifiedObject.type = "TOP321_FACE_RECO_EVENT";
     modifiedObject.TimeInstant = new Date();
     deviceId = modifiedObject.deviceId;
-    //console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
+    console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
     const options1 = {
         method: "GET",
         headers: {
@@ -212,8 +211,6 @@ function kafka321Test() {
                 "objectStoreId": "5eaad8e0a73040a68e7bb894",
                 "results": "{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.907463390827179], \"class_names\": [\"Beckham\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
             }],
-            //                "camLatitude": "20.000021", added by me
-            //              "camLongitude": "40.000001", added by me
             "description": "A face was detected"
         }
     };
@@ -252,19 +249,21 @@ function kafka321Test() {
         }
         console.log("Kafka 321 Test data " + JSON.stringify(data));
     });
+
     //options we are not currently using
-    const options = {
-        method: "POST",
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
-        },
-        //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
-        uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
-        resolveWithFullResponse: true,
-        json: true,
-        body: modifiedObject
-    };
+    // const options = {
+    //     method: "POST",
+    //     headers: {
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Content-Type": "application/json"
+    //     },
+    //     //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
+    //     uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
+    //     resolveWithFullResponse: true,
+    //     json: true,
+    //     body: modifiedObject
+    // };
+
     //}
     //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`);
     // rp(options)
@@ -717,20 +716,20 @@ router.post('/perseoRule4', async (req, res) => {
         fiwareResponseBody.camLongitude = undefined;
         console.log(allEntitiesInLast1Hour.length);
         //here we will add another condition, related to Data Object Detection
-        if (allEntitiesInLast1Hour.length > 3) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than three times within last hour`; //, at locations ${filterDeviceIds}
+        if (allEntitiesInLast1Hour.length > 3 && allObjectEntitiesInLast1Hour) {
+            fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`; //, at locations ${filterDeviceIds}
             fiwareResponseBody.deviceId = deviceIdsLast1Hour;
             fiwareResponseBody.timestamp_processing = timeInstant1Hour;
             fiwareResponseBody.recognitions = recognitionsLast1Hour;
             fiwareResponseBody.msgs = MsgIdsInLast1Hour;
         } else if (allEntitiesInLast3Hours.length > 6) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than six times since last three hours`;
+            fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`;
             fiwareResponseBody.deviceId = deviceIdsLast3Hours;
             fiwareResponseBody.timestamp_processing = timeInstant3Hours;
             fiwareResponseBody.recognitions = recognitionsLast3Hours;
             fiwareResponseBody.msgs = MsgIdsInLast3Hours;
         } else if (allEntitiesInLast6Hours.length > 9) {
-            fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than nine times since last six hours`;
+            fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`;
             fiwareResponseBody.deviceId = deviceIdsLast6Hours;
             fiwareResponseBody.timestamp_processing = timeInstant6Hours;
             fiwareResponseBody.recognitions = recognitionsLast6Hours;

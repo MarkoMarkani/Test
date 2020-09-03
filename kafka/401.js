@@ -9,7 +9,7 @@ const {
 var Producer = kafka.Producer,
     client = new kafka.KafkaClient({
 //        kafkaHost: "217.172.12.192:9092" //modify
-        kafkaHost: `${awsIp}:9094` //this will be modified
+        kafkaHost: `${awsIp}:9092` //this will be modified
 
     }),
     producer = new Producer(client);

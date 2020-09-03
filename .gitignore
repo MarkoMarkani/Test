@@ -64,3 +64,6 @@ recordings/
 
 #logs folder
 logs/
+
+#clientnode_mudules
+client/node_modules/

@@ -9,7 +9,7 @@ const Navbar = () => {
         <Link to='/'>Entities</Link>
       </li>
       <li>
-        <Link to='/'>Posts</Link>
+        <Link to='/'>Topics</Link>
       </li>
       <li>
         <Link to='/'>
