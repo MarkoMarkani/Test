@@ -1,48 +1,51 @@
-import React, { Fragment } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import * as FaIcons from 'react-icons/fa';
+import * as AiIcons from 'react-icons/ai';
+import { IconContext } from 'react-icons';
+import { Fragment } from 'react';
+import { Sidebar } from './Sidebar';
 
 const Navbar = () => {
-  const toggleScreen = (e) => {
-   console.log("Hello amigos");
-  };
+  const [sidebar, setSidebar] = useState(false);
+
+  const showSidebar = () => setSidebar(!sidebar);
 
   return (
-    <Fragment>
-      <div className='d-flex' id='wrapper'>
-        <div className='bg-dark border-right' id='sidebar-wrapper'>
-          <div className='sidebar-heading'> Select action </div>
-          <div className='list-group list-group-flush'>
-            <Link to='#' className='list-group-item list-group-item-action bg-dark'>
-              Rules overview
-            </Link>
-            <Link to='#' className='list-group-item list-group-item-action bg-dark'>
-              Rules history
-            </Link>
-            <Link to='#' className='list-group-item list-group-item-action bg-dark'>
-              Topics
-            </Link>
-            <Link to='#' className='list-group-item list-group-item-action bg-dark'>
-              Maps
-            </Link>
-            <Link to='#' className='list-group-item list-group-item-action bg-dark'>
-              Status
-            </Link>
-          </div>
+<Fragment>
+<IconContext.Provider value={{ color: '#fff' }}>
+        <div className='navbar'>
+          <Link to='#' className='menu-bars'>
+            <FaIcons.FaBars onClick={showSidebar} />
+          </Link>
+          <h3>Connexions</h3>
         </div>
-        <div id='page-content-wrapper'>
-          <nav className='navbar navbar-expand-lg navbar-dark bg-dark border-bottom'>
-            <i className='navbar-toggler-icon' id='menu-toggle' onClick={toggleScreen}></i>
-            <h2 className='title'> Connexions </h2>
-          </nav>
-        </div>
-      </div>
-    </Fragment>
+        <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
+          <ul className='nav-menu-items' onClick={showSidebar}>
+            <li className='navbar-toggle'>
+              <Link to='#' className='menu-bars'>
+                <AiIcons.AiOutlineClose />
+              </Link>
+            </li>
+            {Sidebar.map((item, index) => {
+              return (
+                <li key={index} className={item.cName}>
+                  <Link to={item.path}>
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </IconContext.Provider>
+
+</Fragment>
   );
 };
 
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-});
+const mapStateToProps = (state) => ({});
 
 export default connect(mapStateToProps)(Navbar);

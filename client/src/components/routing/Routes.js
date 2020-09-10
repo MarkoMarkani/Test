@@ -1,5 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import Entities from '../orion/Entities';
+import Overview from '../orion/Overview';
 // import Register from '../auth/Register';
 // import Login from '../auth/Login';
 // import Alert from '../layout/Alert';
@@ -20,6 +22,8 @@ const Routes = props => {
     <section className="container">
       {/* <Alert /> */}
       <Switch>
+      <Route exact path="/entities" component={Entities} />
+      <Route exact path="/overview" component={Overview} />
         {/* <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/profiles" component={Profiles} />
