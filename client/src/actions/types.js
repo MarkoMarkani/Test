@@ -1,4 +1,7 @@
 export const SET_ALERT = 'SET_ALERT';
 export const REMOVE_ALERT = 'REMOVE_ALERT';
 export const GET_ALL_ENTITIES = 'GET_ALL_ENTITIES';
+export const GET_321_ENTITIES = 'GET_321_ENTITIES';
+export const GET_301_ENTITIES = 'GET_301_ENTITIES';
+export const GET_CAMERA_ENTITIES = 'GET_CAMERA_ENTITIES';
 export const ORION_ERROR = 'ORION_ERROR';

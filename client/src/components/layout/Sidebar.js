@@ -35,6 +35,12 @@ export const Sidebar = [
     path: '/entities',
     icon: <FaIcons.FaObjectGroup />,
     cName: 'nav-text'
+  },
+  {
+    title: 'Cameras',
+    path: '/cameras',
+    icon: <FaIcons.FaCameraRetro />,
+    cName: 'nav-text'
   }
 ]
 

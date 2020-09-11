@@ -72,8 +72,6 @@ consumer.on('message', function (message) {
     //console.log("MODIFIED STRING MESSAGE " + modifiedString);
     // console.log("Type is " + typeof modifiedString);
     modifiedObject = JSON.parse(modifiedString);
-    modifiedObject.id = "urn:ngsi-ld:TOP321_FACE_RECO_EVENT:" + uuidv4();
-    modifiedObject.type = "TOP321_FACE_RECO_EVENT";
     modifiedObject.TimeInstant = new Date();
     deviceId = modifiedObject.deviceId;
     console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
@@ -111,12 +109,15 @@ consumer.on('message', function (message) {
             .then(res => {
                 //console.log(res.body);
                 bodyObject = JSON.parse(res.body);
+                modifiedObject.id = "urn:ngsi-ld:TOP321_FACE_RECO_EVENT:" + uuidv4();
+                modifiedObject.type = "TOP321_FACE_RECO_EVENT";
                 modifiedObject.camLatitude = bodyObject.camLatitude;
                 modifiedObject.camLongitude = bodyObject.camLongitude;
                 return rp(options2);
             })
             .then(res => {
                 console.log(`Entity has been stored successfully after receiving mesage from Kafka and modifying it, status code is ${res.statusCode}`);
+                console.log(res);
                 // let id = res.headers.location.split("/")[3].split("?")[0];
                 // return id;
             })

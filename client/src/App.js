@@ -6,6 +6,7 @@ import './App.css';
 import { Provider } from 'react-redux';
 import store from './store';
 import Navbar from './components/layout/Navbar';
+import Overview from './components/orion/Overview';
 
 const App = () => {
   return (
@@ -14,7 +15,7 @@ const App = () => {
      <Fragment>
       <Navbar/>
       <Switch>
-       {/* <Route exact path="/" component={Landing} /> */}
+       <Route exact path="/" component={Overview} />
        <Route component={Routes} />
       </Switch>
      </Fragment>

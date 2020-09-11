@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAllEntities } from '../../actions/orion';
+import { get321Entities } from '../../actions/orion';
 
-const Entities = ({ orion: { entities }, getAllEntities }) => {
+const Face321 = ({ orion: { entities }, get321Entities }) => {
   useEffect(() => {
-    getAllEntities();
-  }, [getAllEntities]);
+    get321Entities();
+  }, [get321Entities]);
   console.log(entities);
   return (
     <div className='wrapper'>
-      <h3>Entity list</h3>
+      <h3>Face Reco list</h3>
       <div>
         {entities.map((entity) => (
           <ul className='entityList' key={entity.id}>
@@ -35,8 +35,8 @@ const Entities = ({ orion: { entities }, getAllEntities }) => {
   );
 };
 
-Entities.propTypes = {
-  getAllEntities: PropTypes.func.isRequired,
+Face321.propTypes = {
+  get321Entities: PropTypes.func.isRequired,
   orion: PropTypes.object.isRequired,
 };
 
@@ -44,4 +44,4 @@ const mapStateToProps = (state) => ({
   orion: state.orion,
 });
 
-export default connect(mapStateToProps, { getAllEntities })(Entities);
+export default connect(mapStateToProps, { get321Entities })(Face321);

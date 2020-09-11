@@ -9,8 +9,8 @@ const Overview = ({ orion: { entities }, getAllEntities }) => {
   }, [getAllEntities]);
   console.log(entities);
   return (
-    <div class='wrapper'>
-      <h3 class='title'>Overview</h3>
+    <div className='wrapper'>
+      <h3 className='title'>Overview</h3>
 
     </div>
   );

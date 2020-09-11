@@ -2,6 +2,10 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Entities from '../orion/Entities';
 import Overview from '../orion/Overview';
+import Topics from '../orion/Topics';
+import Cameras from '../orion/Cameras';
+import Object301 from '../orion/Object301';
+import Face321 from '../orion/Face321';
 // import Register from '../auth/Register';
 // import Login from '../auth/Login';
 // import Alert from '../layout/Alert';
@@ -24,6 +28,11 @@ const Routes = props => {
       <Switch>
       <Route exact path="/entities" component={Entities} />
       <Route exact path="/overview" component={Overview} />
+      <Route exact path="/topics" component={Topics} />
+      <Route exact path="/face321" component={Face321} />
+      <Route exact path="/object301" component={Object301} />
+      <Route exact path="/cameras" component={Cameras} />
+      
         {/* <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/profiles" component={Profiles} />

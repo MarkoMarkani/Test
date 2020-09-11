@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAllEntities } from '../../actions/orion';
+import { get301Entities } from '../../actions/orion';
 
-const Entities = ({ orion: { entities }, getAllEntities }) => {
+const Object301 = ({ orion: { entities }, get301Entities }) => {
   useEffect(() => {
-    getAllEntities();
-  }, [getAllEntities]);
+    get301Entities();
+  }, [get301Entities]);
   console.log(entities);
   return (
     <div className='wrapper'>
-      <h3>Entity list</h3>
+      <h3>Object Detect list</h3>
       <div>
         {entities.map((entity) => (
           <ul className='entityList' key={entity.id}>
@@ -35,8 +35,8 @@ const Entities = ({ orion: { entities }, getAllEntities }) => {
   );
 };
 
-Entities.propTypes = {
-  getAllEntities: PropTypes.func.isRequired,
+Object301.propTypes = {
+  get301Entities: PropTypes.func.isRequired,
   orion: PropTypes.object.isRequired,
 };
 
@@ -44,4 +44,4 @@ const mapStateToProps = (state) => ({
   orion: state.orion,
 });
 
-export default connect(mapStateToProps, { getAllEntities })(Entities);
+export default connect(mapStateToProps, { get301Entities })(Object301);
