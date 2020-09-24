@@ -14,7 +14,7 @@ export const Sidebar = [
   },
   {
     title: 'Rules history',
-    path: '/history',
+    path: '/processedentities',
     icon: <IoIcons.IoIosPaper />,
     cName: 'nav-text'
   },
@@ -30,12 +30,12 @@ export const Sidebar = [
     icon: <IoIcons.IoMdMap />,
     cName: 'nav-text'
   },
-  {
-    title: 'Entities',
-    path: '/entities',
-    icon: <FaIcons.FaObjectGroup />,
-    cName: 'nav-text'
-  },
+  // {
+  //   title: 'Entities',
+  //   path: '/',
+  //   icon: <FaIcons.FaObjectGroup />,
+  //   cName: 'nav-text'
+  // },
   {
     title: 'Cameras',
     path: '/cameras',

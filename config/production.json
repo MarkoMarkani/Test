@@ -1,0 +1,5 @@
+{
+    "mongoURI": "mongodb://localhost/",
+    "jwtSecret": "secret",
+    "githubToken": ""
+ }

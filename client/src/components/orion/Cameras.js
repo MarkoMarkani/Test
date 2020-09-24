@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getCameraEntities } from '../../actions/orion';
 
@@ -15,7 +16,7 @@ const Cameras = ({ orion: { entities }, getCameraEntities }) => {
         {entities.map((entity) => (
           <ul className='entityList' key={entity.id}>
             <li>
-              <p><span>Id</span>: {entity.id}</p>
+              <Link to={`/camera/${entity.id}`}><span>Id</span>: {entity.id}</Link>
               <p><span>Type</span>: {entity.type}</p>
               <p><span>Cam Latitude</span>: {entity.camLatitude}</p>
               <p><span>Cam Longitude</span>: {entity.camLongitude}</p>

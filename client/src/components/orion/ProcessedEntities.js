@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAllEntities } from '../../actions/orion';
+import { getProcessed321Entities } from '../../actions/orion';
 
-const Entities = ({ orion: { entities }, getAllEntities }) => {
+const Entities = ({ orion: { entities }, getProcessed321Entities }) => {
   useEffect(() => {
-    getAllEntities();
-  }, [getAllEntities]);
+    getProcessed321Entities();
+  }, [getProcessed321Entities]);
   console.log(entities);
   return (
     <div className='wrapper'>
-      <h3>Entity list</h3>
+      <h3>Processed entities</h3>
       <div>
         {entities.map((entity) => (
           <ul className='entityList' key={entity.id}>
@@ -26,6 +26,8 @@ const Entities = ({ orion: { entities }, getAllEntities }) => {
               <p><span>Device Id</span>: {entity.deviceId}</p>
               <p><span>Object Store Id</span>: {entity.objectStoreId}</p>
               <p><span>Scores</span>: {entity.scores}</p>
+              <p><span>Count</span>: {entity.count}</p>
+              <p><span>Rule Name</span>: {entity.ruleName}</p>
               {/* <p><span>Suspect description</span>: {entity.suspect_description}</p> */}
             </li>
           </ul>
@@ -36,7 +38,7 @@ const Entities = ({ orion: { entities }, getAllEntities }) => {
 };
 
 Entities.propTypes = {
-  getAllEntities: PropTypes.func.isRequired,
+  getProcessed321Entities: PropTypes.func.isRequired,
   orion: PropTypes.object.isRequired,
 };
 
@@ -44,4 +46,4 @@ const mapStateToProps = (state) => ({
   orion: state.orion,
 });
 
-export default connect(mapStateToProps, { getAllEntities })(Entities);
+export default connect(mapStateToProps, { getProcessed321Entities })(Entities);

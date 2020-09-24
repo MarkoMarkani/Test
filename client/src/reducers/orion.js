@@ -1,4 +1,4 @@
-import { GET_ALL_ENTITIES,GET_321_ENTITIES,GET_301_ENTITIES,GET_CAMERA_ENTITIES } from '../actions/types';
+import { GET_PROCESSED_321_ENTITIES,GET_321_ENTITIES_BY_DEVICEID,GET_321_ENTITIES,GET_301_ENTITIES,GET_CAMERA_ENTITIES } from '../actions/types';
 
 const initialState = {
   entities: [],
@@ -9,12 +9,18 @@ const initialState = {
 export default function (state = initialState, action) {
   const { type, payload } = action;
   switch (type) {
-    case GET_ALL_ENTITIES:
+    case GET_PROCESSED_321_ENTITIES:
       return {
         ...state,
         entities: payload,
         loading: false,
       };
+      case GET_321_ENTITIES_BY_DEVICEID:
+        return {
+          ...state,
+          entities: payload,
+          loading: false,
+        };
     case GET_321_ENTITIES:
       return {
         ...state,
