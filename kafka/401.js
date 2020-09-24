@@ -88,7 +88,7 @@ function sendRtmptoRtspKafka(StreamPath, recordingName,streamStatus) {
 
         streamUrl: `rtmp://${serverIp}:8002` + StreamPath, //this will be dynamic
 
-        recordingPath: recordingName ? `${process.cwd()}/recordings/` + recordingName : "Not available yet", //this will be dynamic modify 
+        recordingPath: recordingName ? `${process.cwd()}/recordings/` + recordingName : "", //this will be dynamic modify 
 
         platform: `Body worn camera`
 
@@ -139,7 +139,7 @@ let recordingName;
         .on('start', function (commandLine) {
            // recordingName = commandLine.split(" ")[6].split("/")[6];
       //      recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
-        recordingName=commandLine.split(" ")[6].split("/")[7]        
+        recordingName=commandLine.split(" ")[6].split("/")[8]        
         console.log("This is recording name "+recordingName);
             console.log("Start has been triggered " + commandLine);
             sendRtmptoRtspKafka(StreamPath, null,streamStatus); //promenicemo
