@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ const Cameras = ({ orion: { entities }, getCameraEntities }) => {
   useEffect(() => {
     getCameraEntities();
   }, [getCameraEntities]);
-  console.log(entities);
+ 
   return (
     <div className='wrapper'>
       <h3>Camera list</h3>

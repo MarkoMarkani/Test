@@ -1,38 +1,109 @@
-import React, { Fragment, useEffect } from 'react';
+import React, {  useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get321EntitiesByDeviceId } from '../../actions/orion';
 
-const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId,match }) => {
+const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId, match }) => {
   useEffect(() => {
     get321EntitiesByDeviceId(match.params.id);
   }, [get321EntitiesByDeviceId, match.params.id]);
 
-const params=match.params.id.split(":")[3];
+  const [paramData, setParam] = useState({
+    nameParam: '',
+    scoresParam: 0,
+  });
+  const { nameParam, scoresParam } = paramData;
+  const onChange = (e) =>
+    setParam({ ...paramData, [e.target.name]: e.target.value });
+
+  const params = match.params.id.split(':')[3];
+
+  const detectionsAboveSomething = (number) => {
+    return entities.filter(
+      (entity) => entity.deviceId === params && entity.scores > number
+    ).map((entity) => mappedEntities(entity))
+  };
+
+  const mappedEntities = (entity) => (
+    <ul className='entityList' key={entity.id}>
+      <li>
+        <p>
+          <span>Id</span>: {entity.id}
+        </p>
+        <p>
+          <span>Type</span>: {entity.type}
+        </p>
+        <p>
+          <span>Time Instant</span>: {entity.TimeInstant}
+        </p>
+
+        <p>
+          <span>Cam Latitude</span>: {entity.camLatitude}
+        </p>
+        <p>
+          <span>Cam Longitude</span>: {entity.camLongitude}
+        </p>
+        <p>
+          <span>Class Names</span>: {entity.class_names}
+        </p>
+        <p>
+          <span>Description</span>: {entity.description}
+        </p>
+        <p>
+          <span>Device Id</span>: {entity.deviceId}
+        </p>
+        <p>
+          <span>Object Store Id</span>: {entity.objectStoreId}
+        </p>
+        <p>
+          <span>Scores</span>: {entity.scores}
+        </p>
+
+      </li>
+    </ul>
+  );
 
   return (
     <div className='wrapper'>
       <h3>Camera {params} detections</h3>
+      <p>
+        <label>
+          Filter by the suspect
+          <input
+            className='search-box'
+            type='text'
+            name='nameParam'
+            placeholder='Enter name'
+            value={nameParam}
+            onChange={onChange}
+          />
+        </label>
+      </p>
+      <p>
+        <label>
+          Filter by the percentage
+          <input
+            className='search-box'
+            type='text'
+            name='scoresParam'
+            placeholder='Enter detection percentage'
+            value={scoresParam}
+            onChange={onChange}
+          />
+        </label>
+      </p>
+
       <div>
-        {entities.filter((entity) => (entity.deviceId===params)).map(
-            entity=>(
-                <ul className='entityList' key={entity.id}>
-                <li>
-                  <p><span>Id</span>: {entity.id}</p>
-                  <p><span>Type</span>: {entity.type}</p>
-                  <p><span>Time Instant</span>: {entity.TimeInstant}</p>
-                  {/* <p><span>Attach Desc</span>: {entity.attachDesc}</p> */}
-                  <p><span>Cam Latitude</span>: {entity.camLatitude}</p>
-                  <p><span>Cam Longitude</span>: {entity.camLongitude}</p>
-                  <p><span>Class Names</span>: {entity.class_names}</p>
-                  <p><span>Description</span>: {entity.description}</p>
-                  <p><span>Device Id</span>: {entity.deviceId}</p>
-                  <p><span>Object Store Id</span>: {entity.objectStoreId}</p>
-                  <p><span>Scores</span>: {entity.scores}</p>
-                  {/* <p><span>Suspect description</span>: {entity.suspect_description}</p> */}
-                </li>
-              </ul>
-        ))}
+        { !nameParam 
+          ? entities
+              .filter((entity) => entity.deviceId === params && entity.scores > scoresParam)
+              .map((entity) => mappedEntities(entity))
+          : entities
+              .filter(
+                (entity) =>
+                  entity.deviceId === params && entity.class_names === nameParam && entity.scores > scoresParam
+              )
+              .map((entity) => mappedEntities(entity))}
       </div>
     </div>
   );
