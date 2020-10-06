@@ -1,11 +1,13 @@
-var kafka = require('kafka-node');
-var ffmpeg = require('fluent-ffmpeg');
+const kafka = require('kafka-node');
+//const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+//ffmpeg.setFfmpegPath(ffmpegPath);
 let config=require(`../config/config`);
 const serverIp=config.serverIp;  
 const awsIp=config.awsIp;
 const {
     v4: uuidv4
-} = require('uuid');
+} = require('uuid');  
 var Producer = kafka.Producer,
     client = new kafka.KafkaClient({
 //        kafkaHost: "217.172.12.192:9092" //modify
@@ -86,7 +88,7 @@ function sendRtmptoRtspKafka(StreamPath, recordingName,streamStatus) {
 
         streamStatus: streamStatus ? "ENDED" : "STARTED",
 
-        streamUrl: `rtmp://${serverIp}:8002` + StreamPath, //this will be dynamic
+        streamUrl: `rtmp://${awsIp}:8002` + StreamPath, //this will be dynamic
 
         recordingPath: recordingName ? `${process.cwd()}/recordings/` + recordingName : "", //this will be dynamic modify 
 
@@ -130,7 +132,7 @@ function sendRtmptoRtspKafka(StreamPath, recordingName,streamStatus) {
 
 function ffmpegConversionToMp4(StreamPath,streamStatus) {
 let recordingName;
-    ffmpeg(`rtmp://${serverIp}:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic modify
+    ffmpeg(`rtmp://${awsIp}:8002${StreamPath}`, { //217.172.12.192 //this will be dynamic modify
             timeout: 432000
         })
         .videoCodec('libx264')
@@ -139,7 +141,7 @@ let recordingName;
         .on('start', function (commandLine) {
            // recordingName = commandLine.split(" ")[6].split("/")[6];
       //      recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
-        recordingName=commandLine.split(" ")[6].split("/")[8]        
+        recordingName=commandLine.split(" ")[6].split("/")[6]        
         console.log("This is recording name "+recordingName);
             console.log("Start has been triggered " + commandLine);
             sendRtmptoRtspKafka(StreamPath, null,streamStatus); //promenicemo
@@ -164,7 +166,8 @@ let recordingName;
         .on('error', function (err) {
             console.log('an error happened: ' + err.message);
         })
-        .save(`${process.cwd()}/recordings/${uuidv4()}.mp4`); ///home/ubuntu/iot/test08/Test/recordings //this will be dynamic modify
+        .save(`${process.cwd()}/recordings/${uuidv4()}.mp4`); 
+       // .noVideo(); //just for testing
 }
 
 
