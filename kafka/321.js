@@ -189,13 +189,13 @@ function kafka321Test() {
       caseId: '44092dec-ebbb-44b5-b42b-6872f28c590d',
     },
     body: {
-      attachment: [
+      attachment: [ 
         {
           mimeType: 'video/mp4',
           attachDesc: 'New face detection results',
           objectStoreId: '5eaad8e0a73040a68e7bb894',
           results:
-            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.707463390827179], "class_names": ["Ronaldo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-11"}',
+            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.907463390827179], "class_names": ["Ronaldo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-1"}',
         },       
       ],  
       description: 'A face was detected',
@@ -490,7 +490,7 @@ router.post('/perseoRule2', async (req, res) => {
   }
 });
 
-kafka321Test();
+//kafka321Test();
   
 router.post('/perseoRule3', async (req, res) => {
   let dateNow = new Date();
