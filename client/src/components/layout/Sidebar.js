@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 
 export const Sidebar = [
   {
@@ -13,7 +12,7 @@ export const Sidebar = [
     cName: 'nav-text'
   },
   {
-    title: 'Rules history',
+    title: 'CEP entities',
     path: '/processedentities',
     icon: <IoIcons.IoIosPaper />,
     cName: 'nav-text'
@@ -30,12 +29,12 @@ export const Sidebar = [
     icon: <IoIcons.IoMdMap />,
     cName: 'nav-text'
   },
-  // {
-  //   title: 'Entities',
-  //   path: '/',
-  //   icon: <FaIcons.FaObjectGroup />,
-  //   cName: 'nav-text'
-  // },
+  {
+    title: 'Charts',
+    path: '/chart',
+    icon: <FaIcons.FaChartBar />,
+    cName: 'nav-text'
+  },
   {
     title: 'Cameras',
     path: '/cameras',
@@ -44,8 +43,6 @@ export const Sidebar = [
   }
 ]
 
-const mapStateToProps = (state) => ({
-
-});
+//const mapStateToProps = (state) => ({});
 
 // export default connect(mapStateToProps)(Sidebar);

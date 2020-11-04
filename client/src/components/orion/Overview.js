@@ -7,11 +7,12 @@ const Overview = ({ orion: { entities }, getProcessed321Entities }) => {
   useEffect(() => {
     getProcessed321Entities();
   }, [getProcessed321Entities]);
-  console.log(entities);
+ // console.log(entities);
   return (
     <div className='wrapper'>
       {/* <h3 className='title'>Overview</h3> */}
       <table id="overview">
+      <tbody>
   <tr>
     <th>Name</th>
     <th>Description</th>
@@ -60,6 +61,7 @@ const Overview = ({ orion: { entities }, getProcessed321Entities }) => {
     <td></td>
     <td>New topic</td>
   </tr>
+  </tbody>
 </table>
     </div>
   );

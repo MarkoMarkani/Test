@@ -7,12 +7,12 @@ const Entities = ({ orion: { entities }, getProcessed321Entities }) => {
   useEffect(() => {
     getProcessed321Entities();
   }, [getProcessed321Entities]);
-  console.log(entities);
+  
   return (
     <div className='wrapper'>
-      <h3>Processed entities</h3>
+      <h3>Processed entities by the CEP</h3>
       <div>
-        {entities.map((entity) => (
+        {entities.reverse().map((entity) => (
           <ul className='entityList' key={entity.id}>
             <li>
               <p><span>Id</span>: {entity.id}</p>

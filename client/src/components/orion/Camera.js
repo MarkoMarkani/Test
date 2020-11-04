@@ -12,17 +12,14 @@ const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId, match }) => {
     nameParam: '',
     scoresParam: 0,
   });
+
   const { nameParam, scoresParam } = paramData;
   const onChange = (e) =>
     setParam({ ...paramData, [e.target.name]: e.target.value });
 
   const params = match.params.id.split(':')[3];
 
-  const detectionsAboveSomething = (number) => {
-    return entities.filter(
-      (entity) => entity.deviceId === params && entity.scores > number
-    ).map((entity) => mappedEntities(entity))
-  };
+
 
   const mappedEntities = (entity) => (
     <ul className='entityList' key={entity.id}>

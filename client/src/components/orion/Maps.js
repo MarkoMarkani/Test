@@ -4,34 +4,20 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import useSWR from 'swr';
+
 import { getCameraEntities } from '../../actions/orion';
 export const icon = new Icon({
   iconUrl: '../../../videocamera.svg',
   iconSize: [25, 25],
 });
-// const fetcher = (...args) =>
-//   fetch(...args
-//   //   , {
-//   //   method: 'get',
-//   //   headers: {
-//   //     'Fiware-Service': 'a4blue',
-//   //     'Fiware-ServicePath': '/a4blueevents',
-//   //   },
-//   // }
-//   ).then((response) => response.json());
 
 
-const Maps = ({orion: { entities }, getCameraEntities }) => {
+const Maps = ({ orion: { entities }, getCameraEntities }) => {
   useEffect(() => {
     getCameraEntities();
   }, [getCameraEntities]);
 
-  // const url =
-  //   'http://217.172.12.192:1026/v2/entities?type=IP_Camera&options=keyValues&limit=1000';
-  // const { data, error } = useSWR(url, { fetcher });
-  // const cameras = data && !error ? data : [];
-  // console.log(entities);
+
   const [activeCamera, setActiveCamera] = React.useState(null);
 
   return (
@@ -43,14 +29,17 @@ const Maps = ({orion: { entities }, getCameraEntities }) => {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         {entities.map((entity) => (
-          <Marker
-            key={entity.id}
-            position={[entity.camLatitude, entity.camLongitude]}
-            onClick={() => {
-              setActiveCamera(entity);
-            }}
-            icon={icon}
-          />
+          <Fragment key={entity.id}>
+            <Marker
+            
+              position={[entity.camLatitude, entity.camLongitude]}
+              onClick={() => {
+                setActiveCamera(entity);
+              }}
+              icon={icon}
+            />
+
+          </Fragment>
         ))}
 
         {activeCamera && (
@@ -61,7 +50,9 @@ const Maps = ({orion: { entities }, getCameraEntities }) => {
             }}
           >
             <div>
-              <Link to={`/camera/${activeCamera.id}`}>Camera id : {activeCamera.id}</Link>
+              <Link to={`/camera/${activeCamera.id}`}>
+                Camera id : {activeCamera.id}
+              </Link>
               <p>Camera latitude : {activeCamera.camLatitude}</p>
               <p>Camera longitude : {activeCamera.camLongitude}</p>
             </div>

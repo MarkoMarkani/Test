@@ -8,6 +8,7 @@ import Camera from '../orion/Camera';
 import Maps from '../orion/Maps';
 import Object301 from '../orion/Object301';
 import Face321 from '../orion/Face321';
+import Chart from '../orion/Chart';
 // import Register from '../auth/Register';
 // import Login from '../auth/Login';
 // import Alert from '../layout/Alert';
@@ -36,6 +37,7 @@ const Routes = props => {
       <Route exact path="/cameras" component={Cameras} />
       <Route exact path="/camera/:id" component={Camera} />
       <Route exact path="/maps" component={Maps} />
+      <Route exact path="/chart" component={Chart} />
       
         {/* <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />

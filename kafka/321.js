@@ -70,7 +70,7 @@ consumer.on('message', function (message) {
   modifiedObject = JSON.parse(modifiedString);
   modifiedObject.TimeInstant = new Date();
   deviceId = modifiedObject.deviceId;
-  //console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
+  console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
   const options1 = {
     method: 'GET',
     headers: {
@@ -121,7 +121,7 @@ consumer.on('message', function (message) {
       });
   } else {
     console.log('Object has already been stored in Orion');
-    modifiedObject.id = modifiedObject.id + 'rule' + modifiedObject.ruleName + 'count' + modifiedObject.count;
+    modifiedObject.id = modifiedObject.id + modifiedObject.ruleName + 'count' + modifiedObject.count;
     modifiedObject.type = modifiedObject.type + '_RULES';
     console.log(
       `ELSE Entity stored in Orion is ${JSON.stringify(modifiedObject)}`
@@ -195,7 +195,7 @@ function kafka321Test() {
           attachDesc: 'New face detection results',
           objectStoreId: '5eaad8e0a73040a68e7bb894',
           results:
-            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.907463390827179], "class_names": ["Ronaldo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-1"}',
+            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.907463390827179], "class_names": ["Falcao"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-1"}',
         },       
       ],  
       description: 'A face was detected',
@@ -487,7 +487,7 @@ router.post('/perseoRule2', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
-  }
+  } 
 });
 
 //kafka321Test();

@@ -157,8 +157,8 @@ function ffmpegConversionToMp4(StreamPath, streamStatus) {
     ])
     .on('start', function (commandLine) {
       // recordingName = commandLine.split(" ")[6].split("/")[6];
-      //      recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
-      //recordingName = commandLine.split(' ')[12].split('/')[2]; //MODIFY[6][6]
+      // recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
+      // recordingName = commandLine.split(' ')[12].split('/')[2]; //MODIFY[6][6]
       recordingName=commandLine.split(" ").slice(-1).join().split("/").slice(-1).join();
       console.log('This is recording name ' + recordingName);
       console.log('Start has been triggered ' + commandLine);

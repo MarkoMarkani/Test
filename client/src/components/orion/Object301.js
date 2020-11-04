@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get301Entities } from '../../actions/orion';
@@ -7,7 +7,7 @@ const Object301 = ({ orion: { entities }, get301Entities }) => {
   useEffect(() => {
     get301Entities();
   }, [get301Entities]);
-  console.log(entities);
+ // console.log(entities);
   return (
     <div className='wrapper'>
       <h3>Object Detect list</h3>

@@ -8,7 +8,7 @@ const Cameras = ({ orion: { entities }, getCameraEntities }) => {
   useEffect(() => {
     getCameraEntities();
   }, [getCameraEntities]);
- 
+ console.log(entities);
   return (
     <div className='wrapper'>
       <h3>Camera list</h3>

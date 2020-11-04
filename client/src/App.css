@@ -39,7 +39,7 @@ img {
   width: 100%;
 }
 
-label{
+label {
   font-size: 0.8em;
   color: #343a40;
   margin-left: 1em;
@@ -48,7 +48,6 @@ label{
   color: black;
   padding-left: 0.5em;
 }
-
 
 /* Utilities */
 .container {
@@ -63,10 +62,9 @@ label{
   border-radius: 1em;
 }
 
-.wrapper{
+.wrapper {
   overflow: auto;
-  }
-  
+}
 
 @import url('https://fonts.googleapis.com/css?family=Raleway');
 body {
@@ -80,7 +78,7 @@ body {
   /* position: fixed;
   top: 0px;
   width: 100%; */
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
 }
@@ -119,7 +117,7 @@ body {
 
 .nav-text {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   padding: 8px 0px 8px 16px;
   list-style: none;
@@ -151,7 +149,7 @@ body {
   width: 80%;
   height: 80px;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -208,7 +206,7 @@ body {
 
 @media screen and (max-width: 768px) {
   .nav-text span {
-    display:none;
+    display: none;
   }
   .container {
     max-width: 90%;
@@ -217,9 +215,7 @@ body {
     margin-right: 0;
     padding-left: 10%;
     padding-right: 1rem;
-    
   }
-
 }
 
 .leaflet-container {
@@ -232,3 +228,14 @@ input.search-box {
   margin-left: 0.5em;
 }
 
+.polyline {
+  color: red;
+}
+
+.btnGrey {
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  background-color: #d3d3d3;
+  
+}
