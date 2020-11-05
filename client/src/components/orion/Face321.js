@@ -31,7 +31,8 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
   };
 
 
-  const cameraEntities = getCameraEntities().then((e) => console.log(e.data));
+  const cameraEntities = getCameraEntities().then((e) =>  e.data);
+  console.log(cameraEntities);
   const [activeCamera, setActiveCamera] = React.useState(null);
   const [paramData, setParam] = useState({
     nameParam: '',

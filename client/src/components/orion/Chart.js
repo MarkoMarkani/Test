@@ -15,6 +15,7 @@ const Chart = ({ orion: { entities }, get321Entities }) => {
   const entityNames = entities.map((entity) => entity.class_names);
 
   
+console.log("chart");
 
   const setCD = () => {
     setChartData({
