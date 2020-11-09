@@ -1,10 +1,11 @@
 /* Global Styles */
 :root {
-  --primary-color: #17a2b8;
+  --primary-color: #5D8CAE;
   --dark-color: #343a40;
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
   --success-color: #28a745;
+  --ultradark-color:#000000;
 }
 
 * {
@@ -17,7 +18,7 @@ body {
   font-family: 'Raleway', sans-serif;
   font-size: 1.3rem;
   line-height: 1.6;
-  background-color: #fff;
+  background-color:var(--ultradark-color);
   color: #fff;
 }
 
@@ -32,11 +33,15 @@ a:hover {
 }
 
 ul {
-  list-style: none;
+  /* list-style: none; */
 }
 
 img {
   width: 100%;
+}
+
+h3 {
+  padding-bottom: 0.5em;
 }
 
 label {
@@ -45,8 +50,9 @@ label {
   margin-left: 1em;
 }
 .wrapper h3 {
-  color: black;
+  color: white;
   padding-left: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 /* Utilities */
@@ -54,7 +60,7 @@ label {
   max-width: 60%;
   margin: auto;
   overflow: hidden;
-  background: #fff;
+  background: var(--ultradark-color);
   padding: 2rem;
   margin-right: 10%;
   margin-top: 2rem;
@@ -72,7 +78,7 @@ body {
 }
 
 .navbar {
-  background-color: #101010;
+  background-color: var(--dark-color);
   height: 3.5rem;
   display: flex;
   /* position: fixed;
@@ -99,7 +105,7 @@ body {
 }
 
 .nav-menu {
-  background-color: #101010;
+  background-color: var(--dark-color);
   width: 20%;
   height: 100vh;
   display: flex;
@@ -137,7 +143,7 @@ body {
 }
 
 .nav-text a:hover {
-  background-color: #1a83ff;
+  background-color: var(--primary-color);
 }
 
 .nav-menu-items {
@@ -145,7 +151,7 @@ body {
 }
 
 .navbar-toggle {
-  background-color: #101010;
+  background-color: var(--dark-color);
   width: 80%;
   height: 80px;
   display: flex;
@@ -158,24 +164,26 @@ body {
 }
 
 .entityList {
-  background: #d3d3d3;
+  /* background: var(--primary-color); */
   font-size: 0.8em;
-  border-radius: 1.3em;
+  border-radius: 0.5em;
 }
 .entityList li {
-  border: 0.3em solid white;
+  border: 0.2em  solid white;
   padding: 1em;
   overflow: auto;
+  border-radius: 0.5em;
+  background-color: var(--primary-color);
 }
 
 .entityList li p a {
   color: white;
-}
+  }
 
 .entityList li p a:hover {
   color: black;
   font-size: 1.03em;
-}
+ }
 
 .entityList li p span {
   color: black;
@@ -185,22 +193,23 @@ body {
 #overview {
   border-collapse: collapse;
   width: 100%;
-  color: black;
+  color:var(--ultradark-color);
   font-size: 0.5em;
   overflow: auto;
 }
 
 #overview td,
 #overview th {
-  border: 1px solid #ddd;
+  border: 1px solid var(--dark-color) ;
   padding: 8px;
+  background-color: var(--light-color);
 }
 
 #overview th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #d3d3d3;
+  background-color:var(--primary-color) ;
   color: white;
 }
 
@@ -232,10 +241,9 @@ input.search-box {
   color: red;
 }
 
-.btnGrey {
+.btnPrimary {
   padding: 0.4rem;
   cursor: pointer;
   border-radius: 0.4rem;
-  background-color: #d3d3d3;
-  
-}
+  background-color: var(--primary-color);
+  }

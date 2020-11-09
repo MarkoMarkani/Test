@@ -59,7 +59,7 @@ const Maps = ({ orion: { entities }, getCameraEntities }) => {
           </Popup>
         )}
       </Map>
-      )
+      
     </div>
   );
 };

@@ -24,7 +24,7 @@ console.log("chart");
         {
           label: 'Entity scores by name',
           data: entityScores,
-          backgroundColor: ['rgba(46, 81, 181, 0.8)'],
+          backgroundColor: ['#c63939'],
           borderWidth: 4,
         },
       ],
@@ -34,7 +34,7 @@ console.log("chart");
 
   const chartEntities = (
     <Fragment>
-      <button className='btnGrey' onClick={setCD}>Click to see the charts</button>
+      <button className='btnPrimary' onClick={setCD}>Click to see the charts</button>
       <Line
         data={chartData}
         options={{
