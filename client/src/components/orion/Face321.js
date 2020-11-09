@@ -32,7 +32,7 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
 
 
   const cameraEntities = getCameraEntities().then((e) =>  e.data);
-  console.log(cameraEntities);
+  //console.log(cameraEntities);
   const [activeCamera, setActiveCamera] = React.useState(null);
   const [paramData, setParam] = useState({
     nameParam: '',
@@ -157,7 +157,7 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         {!nameParam
-          ? entities.map((entity) => maps(entity))
+          ? null//entities.map((entity) => maps(entity)) we will return this
           : entities
               .filter((entity) => entity.class_names === nameParam)
               .map((entity) => maps(entity))}

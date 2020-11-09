@@ -13,7 +13,9 @@ const Chart = ({ orion: { entities }, get321Entities }) => {
 
   const entityScores = entities.map((entity) => entity.scores);
   const entityNames = entities.map((entity) => entity.class_names);
-
+  const entityTimeInstants = entities.map((entity) => entity.TimeInstant);
+  const entityDeviceIds = entities.map((entity) => entity.deviceId);
+console.log(entityDeviceIds+entityTimeInstants)
   
 console.log("chart");
 
@@ -24,17 +26,45 @@ console.log("chart");
         {
           label: 'Entity scores by name',
           data: entityScores,
-          backgroundColor: ['#c63939'],
+          backgroundColor: ['#FFFF66'],
           borderWidth: 4,
         },
       ],
     });
   };
 
+  const setCD1 = () => {
+    setChartData({
+      labels: entityTimeInstants ,
+      datasets: [
+        {
+          label: 'Entity scores by time',
+          data: entityScores,
+          backgroundColor: ['#3333FF'],
+          borderWidth: 4,
+        },
+      ],
+    });
+  };
+  const setCD2 = () => {
+    setChartData({
+      labels: entityDeviceIds ,
+      datasets: [
+        {
+          label: 'Entity scores by device id',
+          data: entityScores,
+          backgroundColor: ['#FF9999'],
+          borderWidth: 4,
+        },
+      ],
+    });
+  };
 
   const chartEntities = (
     <Fragment>
-      <button className='btnPrimary' onClick={setCD}>Click to see the charts</button>
+      <button className='btnPrimary' onClick={setCD}>Name Chart</button>
+      <button className='btnPrimary' onClick={setCD1}>Time Chart</button>
+      <button className='btnPrimary' onClick={setCD2}>Camera Chart</button>
       <Line
         data={chartData}
         options={{
@@ -68,7 +98,7 @@ console.log("chart");
 
   return (
     <div >
-      <h3>Chart</h3>
+      <h3>Charts</h3>
       {chartEntities}
     </div>
   );

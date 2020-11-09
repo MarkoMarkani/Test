@@ -2,6 +2,7 @@
 let express = require('express');
 let app = express(); 
 app.use(express.json());
+const path = require('path');
 
 let config=require(`./config/config`);
 let logger = require("./config/logger");

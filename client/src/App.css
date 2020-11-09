@@ -46,7 +46,7 @@ h3 {
 
 label {
   font-size: 0.8em;
-  color: #343a40;
+  color: var(--light-color);
   margin-left: 1em;
 }
 .wrapper h3 {
@@ -246,4 +246,5 @@ input.search-box {
   cursor: pointer;
   border-radius: 0.4rem;
   background-color: var(--primary-color);
+  color: var(--light-color)
   }
