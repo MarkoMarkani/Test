@@ -23,7 +23,7 @@ const Maps = ({ orion: { entities }, getCameraEntities }) => {
   return (
     <div className='wrapper'>
       <h3>Maps</h3>
-      <Map center={[44.786568, 20.448921]} zoom={12}>
+      <Map center={[52.370216,4.895168]} zoom={12}>
         <TileLayer
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -70,7 +70,7 @@ Maps.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  orion: state.orion,
+  orion: state.orion, 
 });
 
 export default connect(mapStateToProps, { getCameraEntities })(Maps);

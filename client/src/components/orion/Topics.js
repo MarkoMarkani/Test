@@ -13,8 +13,8 @@ const Topics = ({ orion: { Topics }, getAllTopics }) => {
       <h3>Topics list</h3>
       <div>      
           <ul className='entityList' >
-            <li> <p><Link to="/face321">TOP321_FACE_RECO_EVENT</Link></p></li>
-            <li> <p><Link to="/object301">TOP301_OBJECT_DETECT_EVENT</Link></p></li>  
+            <li> <p><Link to="/face321">TOP321_FACE_RECO_DONE</Link></p></li>
+            <li> <p><Link to="/object301">TOP301_OBJECT_DETECT_DONE</Link></p></li>  
           </ul>
       </div>
     </div>

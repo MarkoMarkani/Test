@@ -151,7 +151,7 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
           />
         </label>
       </p>
-      <Map center={[44.786568, 20.448921]} zoom={12}>
+      <Map center={[52.370216,4.895168]} zoom={12}>
         <TileLayer
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -169,7 +169,7 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
             }}
           >
             <div>
-              <Link to={`/camera/${activeCamera.deviceId}`}>
+              <Link to={`/camera/urn:ngsi-ld:IP_Camera:${activeCamera.deviceId}`}>
                 Camera id : {'urn:ngsi-ld:IP_Camera:' + activeCamera.deviceId}
               </Link>
               <p>Camera latitude : {activeCamera.camLatitude}</p>

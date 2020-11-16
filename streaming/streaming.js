@@ -66,6 +66,8 @@
     // console.log('[NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
      console.log('NodeEvent on prePublish');
      kafka401.ffmpegConversionToMp4(StreamPath);
+     
+     console.log("stream path from streaming"+StreamPath)
      //kafka401.sendRtmptoRtspKafka(StreamPath);
 
  });

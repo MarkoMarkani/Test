@@ -7,6 +7,7 @@ const Entities = ({ orion: { entities }, getProcessed321Entities }) => {
   useEffect(() => {
     getProcessed321Entities();
   }, [getProcessed321Entities]);
+  console.log(entities);
   
   return (
     <div className='wrapper'>

@@ -25,7 +25,7 @@ const apiFiware = axios.create({
 // Get Entities processed by Fiware
 export const getProcessed321Entities = () => async (dispatch) => {
   try {
-    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP321_FACE_RECO_EVENT_RULES');
+    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP321_FACE_RECO_DONE_RULES');
 
     dispatch({
       type: GET_PROCESSED_321_ENTITIES,
@@ -42,7 +42,7 @@ export const getProcessed321Entities = () => async (dispatch) => {
 //get Processed Entitied by Device Id
 export const get321EntitiesByDeviceId = (id) => async (dispatch) => {
   try {
-    const res = await apiFiware.get(`?type=TOP321_FACE_RECO_EVENT&options=keyValues&limit=1000`);
+    const res = await apiFiware.get(`?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`);
 
     dispatch({
       type: GET_321_ENTITIES_BY_DEVICEID,
@@ -59,7 +59,7 @@ export const get321EntitiesByDeviceId = (id) => async (dispatch) => {
 // Get Face Reco Entities
 export const get321Entities = () => async (dispatch) => {
   try {
-    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP321_FACE_RECO_EVENT');
+    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP321_FACE_RECO_DONE');
 
     dispatch({
       type: GET_321_ENTITIES,
@@ -76,7 +76,7 @@ export const get321Entities = () => async (dispatch) => {
 // Get Object Detect Entities
 export const get301Entities = () => async (dispatch) => {
   try {
-    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP301_OBJECT_DETECT_EVENT');
+    const res = await apiFiware.get('?options=keyValues&limit=1000&type=TOP301_OBJECT_DETECT_DONE');
 
     dispatch({
       type: GET_301_ENTITIES,
