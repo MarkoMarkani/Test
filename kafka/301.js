@@ -21,7 +21,7 @@ var Consumer = kafka.Consumer,
     consumer = new Consumer(
         client,
         [{
-            topic: 'TOP301_OBJECT_DETECT_EVENT', 
+            topic: 'TOP301_OBJECT_DETECT_DONE', 
             offset: 0
         }],
         [{
@@ -72,17 +72,17 @@ consumer.on('message', function (message) {
     //console.log("MODIFIED STRING MESSAGE " + modifiedString);
   //   console.log("Type is " + typeof modifiedString);
     modifiedObject = JSON.parse(modifiedString);
-    modifiedObject.id = "urn:ngsi-ld:TOP301_OBJECT_DETECT_EVENT:" + uuidv4();
-    modifiedObject.type = "TOP301_OBJECT_DETECT_EVENT";
+    modifiedObject.id = "urn:ngsi-ld:TOP301_OBJECT_DETECT_DONE:" + uuidv4();
+    modifiedObject.type = "TOP301_OBJECT_DETECT_DONE";
     modifiedObject.TimeInstant = new Date();
     deviceId = modifiedObject.deviceId;
-    console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
+    //console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
     const options1 = {
         method: "GET",
         headers: {
             "Access-Control-Allow-Origin": "*",
-            "Fiware-Service": "a4blue",
-            "Fiware-ServicePath": "/a4blueevents"
+//            "Fiware-Service": "a4blue",
+  //          "Fiware-ServicePath": "/a4blueevents"
         },
         uri: `http://${serverIp}:1026/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, //modify
         // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725", 
@@ -170,7 +170,7 @@ function kafka301Test() {
     console.log("Sending 301 test..");
     const message = {
         "header": {
-          "topicName": "TOP301_OBJECT_DETECT_EVENT",
+          "topicName": "TOP301_OBJECT_DETECT_DONE",
           "topicVer1": 1,
           "topicVer2": 0,
           "msgId": "dummy_id_00001",
@@ -218,7 +218,7 @@ function kafka301Test() {
 
 
     payloads = [{
-        topic: "TOP301_OBJECT_DETECT_EVENT", //BILO JE 401
+        topic: "TOP301_OBJECT_DETECT_DONE", //BILO JE 401 
         messages: stringMessage,
         partition: 0,
         timestamp: Date.now()
@@ -251,6 +251,7 @@ function kafka301Test() {
     //     .catch(err => console.log("Error occured" + err));
 }
 
-//kafka301Test();
+kafka301Test(); 
+
 
 module.exports = router;

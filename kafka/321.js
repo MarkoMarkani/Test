@@ -18,7 +18,7 @@ var Consumer = kafka.Consumer,
     client,
     [
       {
-        topic: 'TOP321_FACE_RECO_EVENT',
+        topic: 'TOP321_FACE_RECO_DONE',
         offset: 0,
       },
     ],
@@ -70,13 +70,13 @@ consumer.on('message', function (message) {
   modifiedObject = JSON.parse(modifiedString);
   modifiedObject.TimeInstant = new Date();
   deviceId = modifiedObject.deviceId;
-  console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
+  //console.log(`Entity stored in Orion is ${JSON.stringify(modifiedObject)}`); //We will comment this for now
   const options1 = {
     method: 'GET',
     headers: {
       'Access-Control-Allow-Origin': '*',
-      // 'Fiware-Service': 'a4blue',
-      // 'Fiware-ServicePath': '/a4blueevents'
+//       'Fiware-Service': 'a4blue',
+  //     'Fiware-ServicePath': '/a4blueevents'
     },
     uri: `http://${serverIp}:1026/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, //modify
     // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
@@ -103,10 +103,10 @@ consumer.on('message', function (message) {
   if (modifiedObject.count === undefined) {
     rp(options1)
       .then((res) => {
-        //console.log(res.body);
+//        console.log(res);
         bodyObject = JSON.parse(res.body);
-        modifiedObject.id = 'urn:ngsi-ld:TOP321_FACE_RECO_EVENT:' + uuidv4();
-        modifiedObject.type = 'TOP321_FACE_RECO_EVENT';    
+        modifiedObject.id = 'urn:ngsi-ld:TOP321_FACE_RECO_DONE:' + uuidv4();
+        modifiedObject.type = 'TOP321_FACE_RECO_DONE';    
         modifiedObject.camLatitude = bodyObject.camLatitude;
         modifiedObject.camLongitude = bodyObject.camLongitude;
         return rp(options2);
@@ -117,19 +117,19 @@ consumer.on('message', function (message) {
         );
       })
       .catch((err) => {
-        console.log(`On Message first : Error is ${err}`);
+        console.log(`On Message before storing entity to Orion : Error is ${err}`);
       });
   } else {
     console.log('Object has already been stored in Orion');
     modifiedObject.id = modifiedObject.id + modifiedObject.ruleName + 'count' + modifiedObject.count;
     modifiedObject.type = modifiedObject.type + '_RULES';
-    console.log(
-      `ELSE Entity stored in Orion is ${JSON.stringify(modifiedObject)}`
-    );
+   // console.log(
+     // `ELSE Entity stored in Orion is ${JSON.stringify(modifiedObject)}`
+    //);
 
     rp(options1)
       .then((res) => {
-        //console.log(res.body);
+      //  console.log(res.body);
         bodyObject = JSON.parse(res.body);
         modifiedObject.camLatitude = bodyObject.camLatitude;
         modifiedObject.camLongitude = bodyObject.camLongitude;
@@ -138,10 +138,10 @@ consumer.on('message', function (message) {
       .then((res) => {
         console.log(
           `Entity has been stored successfully after processing by CEP, status code is ${res.statusCode}`
-        );
+       );
       })
       .catch((err) => {
-        console.log(`On Message second : Error is ${err}`);
+        console.log(`On Message while storing CEP entity to Orion : Error is ${err}`);
       });
   }
 });
@@ -157,7 +157,7 @@ consumer.on('offsetOutOfRange', function (err) {
 //WE don't need this for now, but we will need it sometime when we create a new topic
 
 // var topicsToCreate = [{
-//     topic: 'TOP321_FACE_RECO_EVENT',
+//     topic: 'TOP321_FACE_RECO_DONE',
 //     partitions: 1,
 //     replicationFactor: 1
 // }];
@@ -170,13 +170,14 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
+//function that imitates VAC
 function kafka321Test() {
   console.log('Sending 321 test..');
   const message = {
-    // "id": "urn:ngsi-ld:TOP321_FACE_RECO_EVENT:007",
-    // "type": "TOP321_FACE_RECO_EVENT",
+    // "id": "urn:ngsi-ld:TOP321_FACE_RECO_DONE:007",
+    // "type": "TOP321_FACE_RECO_DONE",
     header: {
-      topicName: 'TOP321_FACE_RECO_EVENT',
+      topicName: 'TOP321_FACE_RECO_DONE',
       topicVer1: 1,
       topicVer2: 0,
       msgId: 'dummy_id_00001',
@@ -194,12 +195,12 @@ function kafka321Test() {
           mimeType: 'video/mp4',
           attachDesc: 'New face detection results',
           objectStoreId: '5eaad8e0a73040a68e7bb894',
-          results:
-            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.907463390827179], "class_names": ["Falcao"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-1"}',
-        },       
-      ],  
+          results:   
+            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.927463390827179], "class_names": ["El Chapo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-5"}',
+        },        
+      ],    
       description: 'A face was detected',
-    },
+    },  
   };
    
   const stringMessage = JSON.stringify(message);
@@ -225,7 +226,7 @@ function kafka321Test() {
 
   payloads = [ 
     {
-      topic: 'TOP321_FACE_RECO_EVENT', //BILO JE 401
+      topic: 'TOP321_FACE_RECO_DONE', //BILO JE 401
       messages: stringMessage,
       partition: 0,
       timestamp: Date.now(),
@@ -237,6 +238,8 @@ function kafka321Test() {
     }
     console.log('Kafka 321 Test data ' + JSON.stringify(data));
   });
+
+ 
 
   //options we are not currently using
   // const options = {
@@ -259,6 +262,9 @@ function kafka321Test() {
   //     .catch(err => console.log("Error occured" + err));
 }
 
+
+kafka321Test();
+
 router.post('/perseoRule1', async (req, res) => {
   let id = req.body.id;
   let count;
@@ -271,7 +277,7 @@ router.post('/perseoRule1', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_EVENT&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
@@ -288,8 +294,8 @@ router.post('/perseoRule1', async (req, res) => {
     resolveWithFullResponse: true,
   };
   try {
-   //console.log(req.body); 
-    console.log('Perseo rule #1 has been executed');
+   console.log(req.body); 
+    console.log('Perseo rule #1 has been triggered');
     let fiwareResponse2 = await rp(optionsFiwareGetById);
     const {
       id,
@@ -348,7 +354,7 @@ router.post('/perseoRule1', async (req, res) => {
     //console.log("TO BE SENT " + modifiedKafkaMessage);
     payloads = [
       {
-        topic: 'TOP321_FACE_RECO_EVENT',
+        topic: 'TOP321_FACE_RECO_DONE',
         messages: modifiedKafkaMessage,
         partition: 0,
         timestamp: Date.now(),
@@ -382,14 +388,14 @@ router.post('/perseoRule2', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_EVENT&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
 
   try {
-    console.log('Perseo rule #2 has been executed');
-
+    console.log('Perseo rule #2 has been triggered');
+    console.log(req.body);
     let fiwareResponse1 = await rp(optionsGetAll321Entities);
     let allEntities = JSON.parse(fiwareResponse1.body);
 
@@ -456,7 +462,8 @@ router.post('/perseoRule2', async (req, res) => {
     fiwareResponseBody.camLongitude = undefined;
 
     fiwareResponseBody.description = `Rule#2 Alert! Face has been spotted more than one time within last 24 hours`; //, at locations ${filterDeviceIds}
-    fiwareResponseBody.deviceId = deviceIdsLast1Day;
+    fiwareResponseBody.deviceIds = deviceIdsLast1Day;
+    //fiwareResponseBody.deviceId = req.body.deviceId;
     fiwareResponseBody.timestamp_processing = timeInstant1Day;
     fiwareResponseBody.recognitions = recognitionsLast1Day;
     fiwareResponseBody.msgs = MsgIdsInLast1Day;
@@ -464,13 +471,14 @@ router.post('/perseoRule2', async (req, res) => {
 
     modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
     if (fiwareResponseBody.timestamp_processing.length > 1) {
-      console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+      //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+      console.log("Eligible to be stored after CEP")
     } else {
       console.log('Count is less than 2');
     }
     payloads = [
       {
-        topic: 'TOP321_FACE_RECO_EVENT',
+        topic: 'TOP321_FACE_RECO_DONE',
         messages: modifiedKafkaMessage,
         partition: 0,
         timestamp: Date.now(),
@@ -490,7 +498,7 @@ router.post('/perseoRule2', async (req, res) => {
   } 
 });
 
-//kafka321Test();
+
   
 router.post('/perseoRule3', async (req, res) => {
   let dateNow = new Date();
@@ -505,13 +513,13 @@ router.post('/perseoRule3', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_EVENT&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
 
   try {
-    console.log('Perseo rule #3 has been executed');
+    console.log('Perseo rule #3 has been triggered');
 
     let fiwareResponse1 = await rp(optionsGetAll321Entities);
     let allEntities = JSON.parse(fiwareResponse1.body);
@@ -636,30 +644,31 @@ router.post('/perseoRule3', async (req, res) => {
     };
     fiwareResponseBody.msgId = fiwareResponseBodyMsgId;
     fiwareResponseBody.count = req.body.count;
+    fiwareResponseBody.deviceId = req.body.deviceId;
     fiwareResponseBody.camLatitude = undefined;
     fiwareResponseBody.camLongitude = undefined;
     fiwareResponseBody.ruleName = 'rule3';
-    console.log(allEntitiesInLast1Hour.length);
+    //console.log(allEntitiesInLast1Hour.length);
     if (allEntitiesInLast1Hour.length > 3) {
       fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than three times within last hour`; //, at locations ${filterDeviceIds}
-      fiwareResponseBody.deviceId = deviceIdsLast1Hour;
+      fiwareResponseBody.deviceIds = deviceIdsLast1Hour;
       fiwareResponseBody.timestamp_processing = timeInstant1Hour;
       fiwareResponseBody.recognitions = recognitionsLast1Hour;
       fiwareResponseBody.msgs = MsgIdsInLast1Hour;
     } else if (allEntitiesInLast3Hours.length > 6) {
       fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than six times since last three hours`;
-      fiwareResponseBody.deviceId = deviceIdsLast3Hours;
+      fiwareResponseBody.deviceIds = deviceIdsLast3Hours;
       fiwareResponseBody.timestamp_processing = timeInstant3Hours;
       fiwareResponseBody.recognitions = recognitionsLast3Hours;
       fiwareResponseBody.msgs = MsgIdsInLast3Hours;
     } else if (allEntitiesInLast6Hours.length > 9) {
       fiwareResponseBody.description = `Rule#3 Alert! Face has been spotted more than nine times since last six hours`;
-      fiwareResponseBody.deviceId = deviceIdsLast6Hours;
+      fiwareResponseBody.deviceIds = deviceIdsLast6Hours;
       fiwareResponseBody.timestamp_processing = timeInstant6Hours;
       fiwareResponseBody.recognitions = recognitionsLast6Hours;
       fiwareResponseBody.msgs = MsgIdsInLast6Hours;
     } else {
-      console.log('Not fullfilled');
+      console.log('Rule#3 does not satisfy the conditions');
     }
 
     let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
@@ -667,7 +676,7 @@ router.post('/perseoRule3', async (req, res) => {
 
     payloads = [
       {
-        topic: 'TOP321_FACE_RECO_EVENT',
+        topic: 'TOP321_FACE_RECO_DONE',
         messages: modifiedKafkaMessage,
         partition: 0,
         timestamp: Date.now(),
@@ -701,7 +710,7 @@ router.post('/perseoRule4', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_EVENT&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
@@ -713,13 +722,13 @@ router.post('/perseoRule4', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP301_OBJECT_DETECT_EVENT&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP301_OBJECT_DETECT_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
 
   try {
-    console.log('Perseo rule #4 has been executed');
+    console.log('Perseo rule #4 has been triggered');
 
     let fiwareResponse1 = await rp(optionsGetAll321FaceEntities);
     let fiwareResponse2 = await rp(optionsGetAll321ObjectEntities);
@@ -728,15 +737,17 @@ router.post('/perseoRule4', async (req, res) => {
     //we are extracting all object entitie in previous hour and filtering them
     let allObjectEntitiesInLast1Hour = allObjectEntities.filter(
       (entity) =>
-        new Date(entity.timestamp_processing) > dateMinus1Hour &&
+        new Date(entity.TimeInstant) > dateMinus1Hour &&
         entity.camLatitude >= req.body.minLatitude &&
         entity.camLatitude <= req.body.maxLatitude &&
         entity.camLongitude >= req.body.minLongitude &&
         entity.camLongitude <= req.body.maxLongitude
     );
+//console.log("OBJECT ENTITIES" + JSON.stringify(allObjectEntities));
+console.log("Object entities in last hour "+ JSON.stringify(allObjectEntitiesInLast1Hour));
     //console.log(allEntities);
     let latestEntity = allEntities
-      .filter((entity) => entity.id === req.body.id)
+      .filter((entity) => entity.id === req.body.id) 
       .map((entity) => entity)[0];
       //console.log(latestEntity);
 
@@ -847,39 +858,25 @@ router.post('/perseoRule4', async (req, res) => {
     };
     fiwareResponseBody.msgId = fiwareResponseBodyMsgId;
     fiwareResponseBody.count = req.body.count;
+    fiwareResponseBody.deviceId = req.body.deviceId;
     fiwareResponseBody.camLatitude = undefined;
     fiwareResponseBody.camLongitude = undefined;
     fiwareResponseBody.ruleName = 'rule4';
     //console.log(allEntitiesInLast1Hour.length);
     //here we will add another condition, related to Data Object Detection
-    if (allEntitiesInLast1Hour.length > 3 && allObjectEntitiesInLast1Hour) {
+if (allEntitiesInLast1Hour.length >= 3 && allObjectEntitiesInLast1Hour.length != 0) {
       fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`; //, at locations ${filterDeviceIds}
-      fiwareResponseBody.deviceId = deviceIdsLast1Hour;
+      fiwareResponseBody.deviceIds = deviceIdsLast1Hour;
       fiwareResponseBody.timestamp_processing = timeInstant1Hour;
       fiwareResponseBody.recognitions = recognitionsLast1Hour;
       fiwareResponseBody.msgs = MsgIdsInLast1Hour;
-    } else if (allEntitiesInLast3Hours.length > 6) {
-      fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`;
-      fiwareResponseBody.deviceId = deviceIdsLast3Hours;
-      fiwareResponseBody.timestamp_processing = timeInstant3Hours;
-      fiwareResponseBody.recognitions = recognitionsLast3Hours;
-      fiwareResponseBody.msgs = MsgIdsInLast3Hours;
-    } else if (allEntitiesInLast6Hours.length > 9) {
-      fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`;
-      fiwareResponseBody.deviceId = deviceIdsLast6Hours;
-      fiwareResponseBody.timestamp_processing = timeInstant6Hours;
-      fiwareResponseBody.recognitions = recognitionsLast6Hours;
-      fiwareResponseBody.msgs = MsgIdsInLast6Hours;
-    } else {
-      console.log('Not fullfilled');
-    }
-
-    let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-    console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+      console.log("length 1 hour "+ allEntitiesInLast1Hour.length +"length all " +  allObjectEntitiesInLast1Hour.length)
+      let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
+      //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
 
     payloads = [
       {
-        topic: 'TOP321_FACE_RECO_EVENT',
+        topic: 'TOP321_FACE_RECO_DONE',
         messages: modifiedKafkaMessage,
         partition: 0,
         timestamp: Date.now(),
@@ -893,6 +890,9 @@ router.post('/perseoRule4', async (req, res) => {
     });
 
     res.json(req.body);
+    } else {
+      console.log('Condition not fullfilled ');
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -902,7 +902,7 @@ router.post('/perseoRule4', async (req, res) => {
 // automatically adds a new camera entity to Orion
 
 router.post('/addNewCamera', async (req, res) => {
-  console.log(req.body);
+  console.log("A new camera has been added with the following attributes : "+req.body);
   try {
     let id = `urn:ngsi-ld:IP_Camera:${req.body.id}`;
     console.log(
@@ -963,7 +963,7 @@ async function addperseoRuleSecond() {
     body: {
       name: 'Perseo321FaceRuleUpdateSecond',
       text:
-        'select *, ev.id? as id, ev.class_names? as class_names, ev.camLatitude? as camLatitude, ev.camLongitude? as camLongitude, count(*) as count from pattern [every ev=iotEvent(cast(cast(camLatitude?,string),float) between 20.000000 and 20.000100, cast(cast(camLongitude?,string),float) between 40.000000 and 40.000100, cast(class_names?,string) like "Ronaldo" and type="TOP321_FACE_RECO_EVENT")].win:time(1 day) group by ev.class_names? having count(ev.class_names?) > 1',
+        'select *, ev.id? as id, ev.class_names? as class_names, ev.camLatitude? as camLatitude, ev.camLongitude? as camLongitude, count(*) as count from pattern [every ev=iotEvent(cast(cast(camLatitude?,string),float) between 20.000000 and 20.000100, cast(cast(camLongitude?,string),float) between 40.000000 and 40.000100, cast(class_names?,string) like "Ronaldo" and type="TOP321_FACE_RECO_DONE")].win:time(1 day) group by ev.class_names? having count(ev.class_names?) > 1',
       action: {
         type: 'post',
         template: '{ ${id},${positionx}}',
@@ -1048,7 +1048,7 @@ async function getAllFaceEntities() {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_EVENT&options=keyValues`, //modify
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues`, //modify
     // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
     resolveWithFullResponse: true,
   };
@@ -1087,3 +1087,4 @@ async function getAllFaceEntities() {
 }
 
 module.exports = router;
+
