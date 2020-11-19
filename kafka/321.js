@@ -196,7 +196,7 @@ function kafka321Test() {
           attachDesc: 'New face detection results',
           objectStoreId: '5eaad8e0a73040a68e7bb894',
           results:   
-            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.927463390827179], "class_names": ["El Chapo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-5"}',
+            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.927463390827179], "class_names": ["El Chapo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-3"}',
         },        
       ],    
       description: 'A face was detected',
@@ -294,7 +294,7 @@ router.post('/perseoRule1', async (req, res) => {
     resolveWithFullResponse: true,
   };
   try {
-   console.log(req.body); 
+   //console.log(req.body); 
     console.log('Perseo rule #1 has been triggered');
     let fiwareResponse2 = await rp(optionsFiwareGetById);
     const {
@@ -395,7 +395,7 @@ router.post('/perseoRule2', async (req, res) => {
 
   try {
     console.log('Perseo rule #2 has been triggered');
-    console.log(req.body);
+    //console.log(req.body);
     let fiwareResponse1 = await rp(optionsGetAll321Entities);
     let allEntities = JSON.parse(fiwareResponse1.body);
 
@@ -472,9 +472,9 @@ router.post('/perseoRule2', async (req, res) => {
     modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
     if (fiwareResponseBody.timestamp_processing.length > 1) {
       //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
-      console.log("Eligible to be stored after CEP")
+      console.log("Rule#2 not eligible to be stored after CEP");
     } else {
-      console.log('Count is less than 2');
+      console.log('Count is less than 2 - Rule#2 not eligible');
     }
     payloads = [
       {
@@ -529,7 +529,7 @@ router.post('/perseoRule3', async (req, res) => {
     let latestEntity = allEntities
       .filter((entity) => entity.id === req.body.id)
       .map((entity) => entity)[0];
-    console.log(latestEntity);
+    //console.log(latestEntity);
 
     let allEntitiesInLast1Hour = allEntities.filter(
       (entity) =>
@@ -672,7 +672,7 @@ router.post('/perseoRule3', async (req, res) => {
     }
 
     let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-    console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+    //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
 
     payloads = [
       {
@@ -744,7 +744,7 @@ router.post('/perseoRule4', async (req, res) => {
         entity.camLongitude <= req.body.maxLongitude
     );
 //console.log("OBJECT ENTITIES" + JSON.stringify(allObjectEntities));
-console.log("Object entities in last hour "+ JSON.stringify(allObjectEntitiesInLast1Hour));
+console.log("Object entities length in last hour is "+ allObjectEntitiesInLast1Hour.length);
     //console.log(allEntities);
     let latestEntity = allEntities
       .filter((entity) => entity.id === req.body.id) 
@@ -870,7 +870,7 @@ if (allEntitiesInLast1Hour.length >= 3 && allObjectEntitiesInLast1Hour.length !=
       fiwareResponseBody.timestamp_processing = timeInstant1Hour;
       fiwareResponseBody.recognitions = recognitionsLast1Hour;
       fiwareResponseBody.msgs = MsgIdsInLast1Hour;
-      console.log("length 1 hour "+ allEntitiesInLast1Hour.length +"length all " +  allObjectEntitiesInLast1Hour.length)
+      console.log("length 1 hour "+ allEntitiesInLast1Hour.length +"length all " +  allObjectEntitiesInLast1Hour.length);
       let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
       //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
 
@@ -891,7 +891,7 @@ if (allEntitiesInLast1Hour.length >= 3 && allObjectEntitiesInLast1Hour.length !=
 
     res.json(req.body);
     } else {
-      console.log('Condition not fullfilled ');
+      console.log('Rule#4 condition is not fullfilled ');
     }
   } catch (err) {
     console.error(err.message);

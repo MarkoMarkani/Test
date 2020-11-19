@@ -251,7 +251,7 @@ function kafka301Test() {
     //     .catch(err => console.log("Error occured" + err));
 }
 
-kafka301Test(); 
+//kafka301Test(); 
 
 
 module.exports = router;

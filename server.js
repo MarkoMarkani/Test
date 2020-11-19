@@ -3,7 +3,6 @@ let express = require('express');
 let app = express(); 
 app.use(express.json());
 const path = require('path');
-
 let config=require(`./config/config`);
 let logger = require("./config/logger");
 
@@ -34,8 +33,6 @@ app.listen(PORT, function () {
 
 //const axios = require('axios');
 //let https = require('https');
-// let cors = require('cors');
-// app.use(cors());
 // let fs = require('fs');
 // let options = {
 //     key: fs.readFileSync('openvidukey.pem'),
