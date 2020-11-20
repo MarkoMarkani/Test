@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { get321Entities, getCameraEntities } from '../../actions/orion';
+import { get321Entities } from '../../actions/orion';
 export const icon = new Icon({
   iconUrl: '../../../videocamera.svg',
   iconSize: [25, 25],
@@ -15,24 +15,25 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
   useEffect(() => {
     get321Entities();
   }, [get321Entities]);
-  const api = axios.create({
-    baseURL: 'http://217.172.12.192:1026/v2/entities',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    resolveWithFullResponse: true,
-  });
-  const getCameraEntities = async () => {
-    try {
-      return await api.get('?options=keyValues&limit=1000&type=IP_Camera');
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
+  // const api = axios.create({
+  //   baseURL: 'http://217.172.12.192:1026/v2/entities',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   resolveWithFullResponse: true,
+  // });
 
-
-  const cameraEntities = getCameraEntities().then((e) =>  e.data);
+  // const getCameraEntities = async () => {
+  //   try {
+  //     return await api.get('?options=keyValues&limit=1000&type=IP_Camera');
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  // const cameraEntities = getCameraEntities().then((e) =>  e.data);
   //console.log(cameraEntities);
+
   const [activeCamera, setActiveCamera] = React.useState(null);
   const [paramData, setParam] = useState({
     nameParam: '',
@@ -41,14 +42,14 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
   const onChange = (e) =>
     setParam({ ...paramData, [e.target.name]: e.target.value });
 
-  const uniqueValues = [
-    ...new Set(
-      entities.map(
-        (entity) =>
-          entity.deviceId + ' ' + entity.camLatitude + ' ' + entity.camLongitude
-      )
-    ),
-  ];
+  // const uniqueValues = [
+  //   ...new Set(
+  //     entities.map(
+  //       (entity) =>
+  //         entity.deviceId + ' ' + entity.camLatitude + ' ' + entity.camLongitude
+  //     )
+  //   ),
+  // ];
   //const uniqueValuesArray = uniqueValues.map((entity) => entity.split(' '));
 
   //console.log(uniqueValues);

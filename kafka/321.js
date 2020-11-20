@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    // kafkaHost: "217.172.12.192:9092"
     kafkaHost: `${awsIp}:9092`,
   }),
   producer = new Producer(client);
@@ -37,7 +36,6 @@ producer.on('error', function (err) {
 });
 
 consumer.on('message', function (message) {
-  let id;
   let modifiedString;
   let stringMessage;
   let modifiedObject;
@@ -151,10 +149,10 @@ consumer.on('error', function (err) {
 });
 
 consumer.on('offsetOutOfRange', function (err) {
-  // console.log('offsetOutOfRange:', err); will come back
+  // console.log('offsetOutOfRange:', err); This will come back
 });
 
-//WE don't need this for now, but we will need it sometime when we create a new topic
+//WE don't need this for now, but we will need it sometime when we decide to create a new topic
 
 // var topicsToCreate = [{
 //     topic: 'TOP321_FACE_RECO_DONE',
@@ -170,12 +168,10 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
-//function that imitates VAC
+//function that basically imitates the Visual Analysis Component
 function kafka321Test() {
   console.log('Sending 321 test..');
   const message = {
-    // "id": "urn:ngsi-ld:TOP321_FACE_RECO_DONE:007",
-    // "type": "TOP321_FACE_RECO_DONE",
     header: {
       topicName: 'TOP321_FACE_RECO_DONE',
       topicVer1: 1,
@@ -236,12 +232,12 @@ function kafka321Test() {
     if (err) {
       console.log(err);
     }
-    console.log('Kafka 321 Test data ' + JSON.stringify(data));
+    console.log('Kafka321Test data ' + JSON.stringify(data));
   });
 
  
 
-  //options we are not currently using
+  //Options we are not currently using
   // const options = {
   //     method: "POST",
   //     headers: {
@@ -263,24 +259,12 @@ function kafka321Test() {
 }
 
 
-kafka321Test();
+//kafka321Test();
 
 router.post('/perseoRule1', async (req, res) => {
   let id = req.body.id;
   let count;
   let modifiedKafkaMessage;
-
-  const optionsGetAll321Entities = {
-    method: 'GET',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Fiware-Service': 'a4blue',
-      'Fiware-ServicePath': '/a4blueevents',
-    },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
-
-    resolveWithFullResponse: true,
-  };
 
   const optionsFiwareGetById = {
     method: 'GET',
@@ -293,10 +277,11 @@ router.post('/perseoRule1', async (req, res) => {
     // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
     resolveWithFullResponse: true,
   };
+
   try {
    //console.log(req.body); 
     console.log('Perseo rule #1 has been triggered');
-    let fiwareResponse2 = await rp(optionsFiwareGetById);
+    let fiwareResponse = await rp(optionsFiwareGetById);
     const {
       id,
       type,
@@ -309,7 +294,7 @@ router.post('/perseoRule1', async (req, res) => {
       timestamp_processing,
       scores,
       suspect_description,
-    } = JSON.parse(fiwareResponse2.body);
+    } = JSON.parse(fiwareResponse.body);
     let fiwareResponseBody = {
       id,
       type,
@@ -323,35 +308,36 @@ router.post('/perseoRule1', async (req, res) => {
       scores,
       suspect_description,
     };
+    
     fiwareResponseBody.count = req.body.count;
     fiwareResponseBody.ruleName = 'rule1';
     count = fiwareResponseBody.count;
 
     switch (count) {
       case '2':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 80%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 80%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       case '3':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 82%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 82%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       case '4':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 84%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 84%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       case '5':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 86%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 86%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       case '6':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 88%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 88%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       case '7':
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 90%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 90%, last seen on ${fiwareResponseBody.deviceId}`;
         break;
       default:
-        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized with possibility of 99%, last seen on ${fiwareResponseBody.deviceId}`;
+        fiwareResponseBody.description = `Rule#1 Alert! Face has been recognized by the CEP tool with possibility of 99%, last seen on ${fiwareResponseBody.deviceId}`;
     }
 
     modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-    //console.log("TO BE SENT " + modifiedKafkaMessage);
+    //console.log("Message to be sent from the IOT Manager to Kafka  " + modifiedKafkaMessage);
     payloads = [
       {
         topic: 'TOP321_FACE_RECO_DONE',
@@ -388,16 +374,15 @@ router.post('/perseoRule2', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
-
+    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, 
     resolveWithFullResponse: true,
   };
 
   try {
     console.log('Perseo rule #2 has been triggered');
     //console.log(req.body);
-    let fiwareResponse1 = await rp(optionsGetAll321Entities);
-    let allEntities = JSON.parse(fiwareResponse1.body);
+    let fiwareResponse = await rp(optionsGetAll321Entities);
+    let allEntities = JSON.parse(fiwareResponse.body);
 
     let latestEntity = allEntities
       .filter((entity) => entity.id === req.body.id)
@@ -414,6 +399,7 @@ router.post('/perseoRule2', async (req, res) => {
         entity.scores < req.body.maxScores &&
         req.body.class_names.includes(entity.class_names.toString())
     );
+
     let MsgIdsInLast1Day = allEntitiesInLast1Day.map(
       (entities) => entities.header.msgId
     );
@@ -423,6 +409,7 @@ router.post('/perseoRule2', async (req, res) => {
     let deviceIdsLast1Day = allEntitiesInLast1Day.map(
       (entity) => entity.deviceId
     );
+
     let recognitionsLast1Day = allEntitiesInLast1Day.map((entity) => [
       entity.deviceId,
       entity.TimeInstant,
@@ -471,10 +458,10 @@ router.post('/perseoRule2', async (req, res) => {
 
     modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
     if (fiwareResponseBody.timestamp_processing.length > 1) {
-      //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
-      console.log("Rule#2 not eligible to be stored after CEP");
+      //console.log('Message to be sent from the IOT Manager to Kafka  ' + modifiedKafkaMessage);
+      console.log("Rule#2 is eligible to be stored after CEP");
     } else {
-      console.log('Count is less than 2 - Rule#2 not eligible');
+      console.log('Count is less than 2 - Rule#2 not eligible to be stored');
     }
     payloads = [
       {
@@ -490,7 +477,6 @@ router.post('/perseoRule2', async (req, res) => {
       }
       console.log('Kafka data Rule#2 ' + JSON.stringify(data));
     });
-
     res.json(req.body);
   } catch (err) {
     console.error(err.message);
@@ -672,7 +658,7 @@ router.post('/perseoRule3', async (req, res) => {
     }
 
     let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-    //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+    //console.log('Message to be sent from IOT Manager to Kafka  ' + modifiedKafkaMessage);
 
     payloads = [
       {
@@ -696,7 +682,7 @@ router.post('/perseoRule3', async (req, res) => {
   }
 });
 
-//this rule adds object reco too, it is in testing
+//this rule adds object reco too, besides face reco
 router.post('/perseoRule4', async (req, res) => {
   let dateNow = new Date();
   let dateMinus1Hour = new Date(dateNow.setHours(dateNow.getHours() - 1));
@@ -863,16 +849,16 @@ console.log("Object entities length in last hour is "+ allObjectEntitiesInLast1H
     fiwareResponseBody.camLongitude = undefined;
     fiwareResponseBody.ruleName = 'rule4';
     //console.log(allEntitiesInLast1Hour.length);
-    //here we will add another condition, related to Data Object Detection
+    //here we will add another condition, related to the Data Object Detection
 if (allEntitiesInLast1Hour.length >= 3 && allObjectEntitiesInLast1Hour.length != 0) {
-      fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and backpack has been abandoned`; //, at locations ${filterDeviceIds}
+      fiwareResponseBody.description = `Rule#4 Alert! Face has been spotted in last  1 hour and an abandoned backpack has been found`; //, at locations ${filterDeviceIds}
       fiwareResponseBody.deviceIds = deviceIdsLast1Hour;
       fiwareResponseBody.timestamp_processing = timeInstant1Hour;
       fiwareResponseBody.recognitions = recognitionsLast1Hour;
       fiwareResponseBody.msgs = MsgIdsInLast1Hour;
       console.log("length 1 hour "+ allEntitiesInLast1Hour.length +"length all " +  allObjectEntitiesInLast1Hour.length);
       let modifiedKafkaMessage = JSON.stringify(fiwareResponseBody);
-      //console.log('TO BE SENT AFTER PROCESSING ' + modifiedKafkaMessage);
+      //console.log('Message to be sent from IOT Manager to Kafka  ' + modifiedKafkaMessage);
 
     payloads = [
       {
@@ -916,8 +902,7 @@ router.post('/addNewCamera', async (req, res) => {
         // 'Fiware-Service': 'a4blue',
         // 'Fiware-ServicePath': '/a4blueevents'
       },
-      uri: `http://${serverIp}:1026/v2/entities?type=IP_Camera&options=keyValues`, //modify
-      // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
+      uri: `http://${serverIp}:1026/v2/entities?type=IP_Camera&options=keyValues`, 
       json: true,
       body: {
         id: id,
@@ -947,7 +932,6 @@ router.post('/addNewCamera', async (req, res) => {
 });
 
 //not using this for now
-
 async function addperseoRuleSecond() {
   const options = {
     method: 'POST',

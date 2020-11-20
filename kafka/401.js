@@ -1,15 +1,12 @@
 const kafka = require('kafka-node');
-//const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
-//ffmpeg.setFfmpegPath(ffmpegPath);
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
 const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    //        kafkaHost: "217.172.12.192:9092" //modify
-    kafkaHost: `${awsIp}:9092`, //this will be modified
+    kafkaHost: `${awsIp}:9092`, // Here should go internal AWS IP
   }),
   producer = new Producer(client);
 
@@ -48,19 +45,17 @@ consumer.on('message', function (message) {
   ) {
     ffmpegRtspConversionToMp4(messageBodyStreamUrl);
   }
-  // ffmpegRtspConversionToMp4(messageBodyStreamUrl);
 });
 
 consumer.on('error', function (err) {
   console.log('Error:', err);
 });
 
-
 consumer.on('offsetOutOfRange', function (err) {
-  // console.log('offsetOutOfRange:', err); will come back
+  // console.log('offsetOutOfRange:', err); This will come back
 });
 
-//WE don't need this for now, but we will need it sometime when we create a new topic
+//WE don't need this for now, but we will need it sometime when we want to create a new topic
 
 // var topicsToCreate = [{
 //     topic: 'TOP401_IOT_PROPAGATE_EVENT',
@@ -76,10 +71,9 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
-function sendRtmptoRtspKafka(StreamPath, recordingName, streamStatus) {
-  //let appServerAddress = process.argv[2].split(":")[0];
-  //console.log("ASA "+appServerAddress)
-  // console.log("This is stream path " + StreamPath);
+function sendRtmpToKafka(StreamPath, recordingName, streamStatus) {
+
+  // console.log("This is a stream path " + StreamPath);
   let deviceIdName;
   let fullMessage2;
   let fullStringMessage2;
@@ -95,13 +89,14 @@ function sendRtmptoRtspKafka(StreamPath, recordingName, streamStatus) {
 
     streamStatus: streamStatus ? 'ENDED' : 'STARTED',
 
-    streamUrl: `rtmp://${awsIp}:8002` + StreamPath, //this will be dynamic
+    streamUrl: `rtmp://${awsIp}:8002` + StreamPath, 
 
+//Commented for now, because we disabled recording on AWS
     // recordingPath: recordingName
     //   ? `${process.cwd()}/recordings/` + recordingName
     //   : '', //this will be dynamic modify
-    
-    recordingPath:`${process.cwd()}/recordings/` + recordingName,
+
+    //    recordingPath:`${process.cwd()}/recordings/` + recordingName,
 
     platform: `Body worn camera`,
   };
@@ -140,10 +135,10 @@ function sendRtmptoRtspKafka(StreamPath, recordingName, streamStatus) {
   });
 }
 
-function ffmpegConversionToMp4(StreamPath, streamStatus) {
+function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
   let recordingName;
   let uniqueId = uuidv4();
-  ffmpeg(`rtmp://${awsIp}:8002${StreamPath}`, {
+  ffmpeg(`rtmp://127.0.0.1:8002${StreamPath}`, {
     //MODIFY {awsIp}
     timeout: 432000,
   })
@@ -152,17 +147,20 @@ function ffmpegConversionToMp4(StreamPath, streamStatus) {
     // .videoBitrate("500")
     .outputOptions([
       '-f segment',
-      '-segment_time 60',
+      '-segment_time 30',
       `recordings/${uniqueId}_%03d.mp4`,
     ])
     .on('start', function (commandLine) {
-      // recordingName = commandLine.split(" ")[6].split("/")[6];
-      // recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
-      // recordingName = commandLine.split(' ')[12].split('/')[2]; //MODIFY[6][6]
-      recordingName=commandLine.split(" ").slice(-1).join().split("/").slice(-1).join();
+      recordingName = commandLine
+        .split(' ')
+        .slice(-1)
+        .join()
+        .split('/')
+        .slice(-1)
+        .join();
       console.log('This is recording name ' + recordingName);
       console.log('Start has been triggered ' + commandLine);
-      sendRtmptoRtspKafka(StreamPath, recordingName, streamStatus); //promenicemo
+      sendRtmpToKafka(StreamPath, recordingName, streamStatus); //promenicemo
     })
     .on('progress', function (progress) {
       console.log('1.Frames: ' + progress.frames);
@@ -178,13 +176,12 @@ function ffmpegConversionToMp4(StreamPath, streamStatus) {
     .on('end', function () {
       console.log('file has ended converting succesfully');
       streamStatus = true;
-      sendRtmptoRtspKafka(StreamPath, recordingName, streamStatus);
+      sendRtmpToKafka(StreamPath, recordingName, streamStatus);
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
     })
     .save(`${process.cwd()}/recordings/${uniqueId}.mp4`);
-  // .noVideo(); //just for testing
 }
 
 function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
@@ -195,20 +192,23 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
   })
     .videoCodec('libx264')
     //.duration(60)
-     .outputOptions([
+    .outputOptions([
       '-f segment',
       '-segment_time 60',
       `recordings/${uniqueId}_%03d.mp4`,
     ])
     // .outputOptions(["-f segment", "-segment_time 10", "recordings/output_%03d.mp4"])
     .on('start', function (commandLine) {
-      // recordingName = commandLine.split(" ")[6].split("/")[6];
-      //      recordingName = commandLine.split(" ")[6].split("/" || "\\")[6]; //   for Linux
-      //recordingName = commandLine.split(' ')[7].split('/')[2]; //MODIFY[6][6]
-      recordingName=commandLine.split(" ").slice(-1).join().split("/").slice(-1).join();
+      recordingName = commandLine
+        .split(' ')
+        .slice(-1)
+        .join()
+        .split('/')
+        .slice(-1)
+        .join();
       console.log('This is recording name ' + recordingName);
       console.log('Start has been triggered ' + commandLine);
-      // sendRtmptoRtspKafka(StreamPath, null,streamStatus); //promenicemo
+      // sendRtmpToKafka(StreamPath, null,streamStatus); //promenicemo
     })
     .on('progress', function (progress) {
       console.log('1.Frames: ' + progress.frames);
@@ -219,14 +219,17 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
       console.log('6.Timemark: ' + progress.timemark + ' sec');
       consumer.on('message', function (message) {
         console.log(message);
-        messageObject=JSON.parse(message.value);
-        messageBodyStreamUrl=messageObject.body.streamUrl;
-        messageBodyStreamStatus=messageObject.body.streamStatus;
-        if(messageBodyStreamUrl.startsWith("rtsp") && messageBodyStreamStatus==="ENDED" ){
-            // ffmpeg(streamUrl, {
-            //   timeout: 432000,
-            // }).save((`${process.cwd()}/recordings/${uniqueId}.mp4`));
-        } 
+        messageObject = JSON.parse(message.value);
+        messageBodyStreamUrl = messageObject.body.streamUrl;
+        messageBodyStreamStatus = messageObject.body.streamStatus;
+        if (
+          messageBodyStreamUrl.startsWith('rtsp') &&
+          messageBodyStreamStatus === 'ENDED'
+        ) {
+          // ffmpeg(streamUrl, {
+          //   timeout: 432000,
+          // }).save((`${process.cwd()}/recordings/${uniqueId}.mp4`));
+        }
       });
     })
     .on('codecData', function (data) {
@@ -239,10 +242,6 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
       console.log('an error happened: ' + err.message);
     })
     .save(`${process.cwd()}/recordings/${uniqueId}.mp4`);
-  // .noVideo(); //just for testing
 }
 
-module.exports = {
-  ffmpegConversionToMp4,
-  sendRtmptoRtspKafka,
-};
+module.exports = { sendRtmpToKafka, ffmpegRtspConversionToMp4, ffmpegRtmpConversionToMp4 };
