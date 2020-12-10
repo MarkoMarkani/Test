@@ -2,16 +2,24 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import { Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { get321Entities } from '../../actions/orion';
+import Pagination from '../layout/Pagination';
 export const icon = new Icon({
   iconUrl: '../../../videocamera.svg',
   iconSize: [25, 25],
 });
 
 const Face321 = ({ orion: { entities }, get321Entities }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entitiesPerPage] = useState(10);
+  const [activeCamera, setActiveCamera] = React.useState(null);
+  const [paramData, setParam] = useState({
+    nameParam: '',
+  });
+
   useEffect(() => {
     get321Entities();
   }, [get321Entities]);
@@ -34,13 +42,17 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
   // const cameraEntities = getCameraEntities().then((e) =>  e.data);
   //console.log(cameraEntities);
 
-  const [activeCamera, setActiveCamera] = React.useState(null);
-  const [paramData, setParam] = useState({
-    nameParam: '',
-  });
+
   const { nameParam } = paramData;
   const onChange = (e) =>
     setParam({ ...paramData, [e.target.name]: e.target.value });
+
+    // const reversedEntities=entities.reverse();
+    const indexOfLastEntity = currentPage * entitiesPerPage;
+    const indexOfFirstEntity = indexOfLastEntity - entitiesPerPage;
+    const currentEntities = entities.slice(indexOfFirstEntity, indexOfLastEntity);
+
+    const paginate = pageNumber => setCurrentPage(pageNumber);
 
   // const uniqueValues = [
   //   ...new Set(
@@ -182,11 +194,16 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
       <h3>Face Reco list</h3>
       <div>
         {!nameParam
-          ? entities.map((entity) => mappedEntities(entity))
-          : entities
+          ? currentEntities.map((entity) => mappedEntities(entity))
+          : currentEntities
               .filter((entity) => entity.class_names === nameParam)
               .map((entity) => mappedEntities(entity))}
       </div>
+      <Pagination
+        postsPerPage={entitiesPerPage}
+        totalPosts={entities.length}
+        paginate={paginate}
+      />
     </div>
   );
 };

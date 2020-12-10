@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-let {sendRtmpToKafka, ffmpegRtmpConversionToMp4} = require('../kafka/401');
+let {sendStreamInfoToKafka, ffmpegRtmpConversionToMp4} = require('../kafka/401');
 
 
 const NodeMediaServer = require('node-media-server');
@@ -44,11 +44,11 @@ nms.on('doneConnect', (id, args) => {
 nms.on('prePublish', (id, StreamPath, args) => {
    // console.log('[NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
     console.log('NodeEvent on prePublish');
-    // ffmpegRtmpConversionToMp4(StreamPath);
-    sendRtmpToKafka(StreamPath);
+     ffmpegRtmpConversionToMp4(StreamPath); //Temporarily commented, using when we want the recording
+    //sendStreamInfoToKafka(StreamPath); Temporarly commented, using when we don't want the recording
     console.log("This is the stream path " + StreamPath);
  
-});
+}); 
 
 nms.on('postPublish', (id, StreamPath, args) => {
   //  console.log('[NodeEvent on postPublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
@@ -59,7 +59,7 @@ nms.on('donePublish', (id, StreamPath, args) => {
    // console.log('[NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
    console.log('NodeEvent on donePublish');
    streamStatus=true;
-   sendRtmpToKafka(StreamPath,null,streamStatus);
+   //sendStreamInfoToKafka(StreamPath,null,streamStatus); Temporarly commented, using when we don't want the recording
 });
 
 nms.on('prePlay', (id, StreamPath, args) => {

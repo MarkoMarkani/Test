@@ -1,14 +1,23 @@
 // Node imports
+const c = require('config');
 let express = require('express');
 let app = express(); 
 app.use(express.json());
 const path = require('path');
 let config=require(`./config/config`);
+let connectDB = require('./config/db');
 let logger = require("./config/logger");
 
+
+// Connect Database
+//connectDB();
+//Define routes
 app.use('/api/kafka321', require('./kafka/321'));
 app.use('/api/kafka301', require('./kafka/301'));
 app.use('/api/streaming', require('./streaming/streaming'));
+app.use('/api/perseo', require('./perseo/perseo'));
+//app.use('/api/auth', require('./auth/auth'));
+
 //app.use(express.static(__dirname + '/public')); // Set the static files location //modify
 
 // Serve static assets in production
@@ -27,6 +36,12 @@ app.listen(PORT, function () {
   logger.info(`App running on port ${PORT}`);
   console.log(`App running on port ${PORT}`);
 });
+
+
+
+
+
+
 
 
 //console.log(`${process.cwd()}\\public\\recordings\\`)

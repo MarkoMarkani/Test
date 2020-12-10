@@ -1,18 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get301Entities } from '../../actions/orion';
+import Pagination from '../layout/Pagination';
 
 const Object301 = ({ orion: { entities }, get301Entities }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entitiesPerPage] = useState(10);
+ 
   useEffect(() => {
     get301Entities();
   }, [get301Entities]);
+
+  // const reversedEntities=entities.reverse();
+  const indexOfLastEntity = currentPage * entitiesPerPage;
+  const indexOfFirstEntity = indexOfLastEntity - entitiesPerPage;
+  const currentEntities = entities.slice(indexOfFirstEntity, indexOfLastEntity);
+
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
+
  // console.log(entities);
   return (
     <div className='wrapper'>
       <h3>Object Detect list</h3>
       <div>
-        {entities.map((entity) => (
+        {currentEntities.map((entity) => (
           <ul className='entityList' key={entity.id}>
             <li>
               <p><span>Id</span>: {entity.id}</p>
@@ -31,6 +44,11 @@ const Object301 = ({ orion: { entities }, get301Entities }) => {
           </ul>
         ))}
       </div>
+      <Pagination
+        postsPerPage={entitiesPerPage}
+        totalPosts={entities.length}
+        paginate={paginate}
+      />
     </div>
   );
 };

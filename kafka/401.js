@@ -6,7 +6,7 @@ const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    kafkaHost: `${awsIp}:9092`, // Here should go internal AWS IP
+    kafkaHost: `${awsIp}:9092`, // Here should be internal AWS IP
   }),
   producer = new Producer(client);
 
@@ -55,7 +55,7 @@ consumer.on('offsetOutOfRange', function (err) {
   // console.log('offsetOutOfRange:', err); This will come back
 });
 
-//WE don't need this for now, but we will need it sometime when we want to create a new topic
+//We don't need this for now, but we will need it sometime when we want to create a new topic
 
 // var topicsToCreate = [{
 //     topic: 'TOP401_IOT_PROPAGATE_EVENT',
@@ -71,7 +71,7 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
-function sendRtmpToKafka(StreamPath, recordingName, streamStatus) {
+function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
 
   // console.log("This is a stream path " + StreamPath);
   let deviceIdName;
@@ -96,7 +96,7 @@ function sendRtmpToKafka(StreamPath, recordingName, streamStatus) {
     //   ? `${process.cwd()}/recordings/` + recordingName
     //   : '', //this will be dynamic modify
 
-    //    recordingPath:`${process.cwd()}/recordings/` + recordingName,
+    recordingPath:`${process.cwd()}/recordings/${deviceIdName}-${recordingName}`,
 
     platform: `Body worn camera`,
   };
@@ -145,11 +145,14 @@ function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
     .videoCodec('libx264')
     //.audioBitrate('128k')
     // .videoBitrate("500")
-    .outputOptions([
-      '-f segment',
-      '-segment_time 30',
-      `recordings/${uniqueId}_%03d.mp4`,
-    ])
+
+    //Options when we cant the fractions of a stream too
+    // .outputOptions([
+    //   '-f segment',
+    //   '-segment_time 30',
+    //   `recordings/${uniqueId}_%03d.mp4`,
+    // ])
+
     .on('start', function (commandLine) {
       recordingName = commandLine
         .split(' ')
@@ -160,7 +163,7 @@ function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
         .join();
       console.log('This is recording name ' + recordingName);
       console.log('Start has been triggered ' + commandLine);
-      sendRtmpToKafka(StreamPath, recordingName, streamStatus); //promenicemo
+      sendStreamInfoToKafka(StreamPath, recordingName, streamStatus); //promenicemo
     })
     .on('progress', function (progress) {
       console.log('1.Frames: ' + progress.frames);
@@ -176,7 +179,7 @@ function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
     .on('end', function () {
       console.log('file has ended converting succesfully');
       streamStatus = true;
-      sendRtmpToKafka(StreamPath, recordingName, streamStatus);
+      sendStreamInfoToKafka(StreamPath, recordingName, streamStatus);
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
@@ -192,11 +195,14 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
   })
     .videoCodec('libx264')
     //.duration(60)
+    
+    //Options when we cant the fractions of a stream too
     .outputOptions([
       '-f segment',
       '-segment_time 60',
       `recordings/${uniqueId}_%03d.mp4`,
     ])
+
     // .outputOptions(["-f segment", "-segment_time 10", "recordings/output_%03d.mp4"])
     .on('start', function (commandLine) {
       recordingName = commandLine
@@ -208,7 +214,7 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
         .join();
       console.log('This is recording name ' + recordingName);
       console.log('Start has been triggered ' + commandLine);
-      // sendRtmpToKafka(StreamPath, null,streamStatus); //promenicemo
+       sendStreamInfoToKafka(StreamPath, null,streamStatus); //Temporarily commented
     })
     .on('progress', function (progress) {
       console.log('1.Frames: ' + progress.frames);
@@ -237,6 +243,9 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
     })
     .on('end', function () {
       console.log('file has ended converting succesfully');
+      // streamStatus = true;   //Temporarily commented
+      // sendStreamInfotoRtspKafka(StreamPath, recordingName, streamStatus);
+      // console.log('This is the stream Path from 401'+StreamPath);
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
@@ -244,4 +253,4 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
     .save(`${process.cwd()}/recordings/${uniqueId}.mp4`);
 }
 
-module.exports = { sendRtmpToKafka, ffmpegRtspConversionToMp4, ffmpegRtmpConversionToMp4 };
+module.exports = { sendStreamInfoToKafka, ffmpegRtspConversionToMp4, ffmpegRtmpConversionToMp4 };
