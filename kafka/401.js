@@ -6,7 +6,7 @@ const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    kafkaHost: `${awsIp}:9092`, // Here should be internal AWS IP
+    kafkaHost: `${awsIp}:9092`, // Here should go internal AWS IP
   }),
   producer = new Producer(client);
 
@@ -71,12 +71,8 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
-function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
 
-  // console.log("This is a stream path " + StreamPath);
-  let deviceIdName;
-  let fullMessage2;
-  let fullStringMessage2;
+async function getDeviceIdName(StreamPath){
   if (StreamPath == '/app/live' || StreamPath == '/app/silvio') {
     deviceIdName = 'bwc3';
   } else if (StreamPath == '/app/cam-kostas') {
@@ -84,6 +80,20 @@ function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
   } else {
     deviceIdName = 'default';
   }
+  return deviceIdName;
+}
+
+
+async function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
+
+  // console.log("This is a stream path " + StreamPath);
+  let deviceIdName;
+  let fullMessage2;
+  let fullStringMessage2;
+
+  await getDeviceIdName(StreamPath).then(data=>deviceIdName=data);
+  console.log('DEVICE ID NAME IN SENDSTREAMTOKAFKA '+deviceIdName);
+
   let fullBodyMessage = {
     deviceId: deviceIdName,
 
@@ -96,7 +106,7 @@ function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
     //   ? `${process.cwd()}/recordings/` + recordingName
     //   : '', //this will be dynamic modify
 
-    recordingPath:`${process.cwd()}/recordings/${deviceIdName}-${recordingName}`,
+    recordingPath:`${process.cwd()}/recordings/` + recordingName,
 
     platform: `Body worn camera`,
   };
@@ -133,10 +143,14 @@ function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
     console.log('Kafka data ' + JSON.stringify(data));
     console.log('Kafka Done');
   });
+return deviceIdName;
 }
 
-function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
+async function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
   let recordingName;
+  let deviceIdName;
+  await getDeviceIdName(StreamPath).then(data=>deviceIdName=data);
+  console.log('DEVICE ID NAME '+deviceIdName);
   let uniqueId = uuidv4();
   ffmpeg(`rtmp://127.0.0.1:8002${StreamPath}`, {
     //MODIFY {awsIp}
@@ -184,7 +198,7 @@ function ffmpegRtmpConversionToMp4(StreamPath, streamStatus) {
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
     })
-    .save(`${process.cwd()}/recordings/${uniqueId}.mp4`);
+    .save(`${process.cwd()}/recordings/${deviceIdName}-${uniqueId}.mp4`);
 }
 
 function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
@@ -252,5 +266,6 @@ function ffmpegRtspConversionToMp4(streamUrl, streamStatus) {
     })
     .save(`${process.cwd()}/recordings/${uniqueId}.mp4`);
 }
+
 
 module.exports = { sendStreamInfoToKafka, ffmpegRtspConversionToMp4, ffmpegRtmpConversionToMp4 };
