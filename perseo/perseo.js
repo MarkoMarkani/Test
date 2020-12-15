@@ -5,7 +5,6 @@ let config = require(`../config/config`);
 const serverIp = config.serverIp;
 const router = express.Router();
 
-
 router.get('/getAllRules', async (req, res) => {
     let perseoResponse;
     let perseoBodyResponse;
@@ -63,7 +62,7 @@ router.get('/getAllRules', async (req, res) => {
           "type":"post",
           "template":"{ ${class_names},${count}}",
           "parameters":{
-             "url": "http://217.172.12.192:5000/api/kafka321/perseoRule1", 
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule1", 
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",
@@ -134,7 +133,7 @@ router.post('/addSecondRule', async (req, res) => {
           "type":"post",
           "template":"{ ${id},${camLatitude}}", 
           "parameters":{
-             "url": "http://217.172.12.192:5000/api/kafka321/perseoRule2",
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule2",
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",
@@ -211,7 +210,7 @@ router.post('/addSecondRule', async (req, res) => {
           "type":"post",
           "template":"{ ${id},${camLatitude}}", 
           "parameters":{
-             "url": "http://217.172.12.192:5000/api/kafka321/perseoRule2",
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule2",
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",
@@ -288,7 +287,7 @@ router.post('/addSecondRule', async (req, res) => {
           "type":"post",
           "template":"{ ${id},${camLatitude}}", 
           "parameters":{
-             "url": "http://217.172.12.192:5000/api/kafka321/perseoRule2",
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule2",
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",

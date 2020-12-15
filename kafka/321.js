@@ -264,8 +264,8 @@ const message={
   //     .catch(err => console.log("Error occured" + err));
 }
 
-//kafka321Test();  
- 
+//kafka321Test();   
+    
 router.post('/perseoRule1', async (req, res) => {
   let id = req.body.id;
   let count;
