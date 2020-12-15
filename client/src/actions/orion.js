@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { GET_PROCESSED_321_ENTITIES, ORION_ERROR,GET_321_ENTITIES,GET_301_ENTITIES,GET_CAMERA_ENTITIES,GET_321_ENTITIES_BY_DEVICEID } from './types';
-
+const serverIp='ec2-35-178-85-208.eu-west-2.compute.amazonaws.com';
+const orionPort='1027';
 
 const api = axios.create({
-  baseURL: 'http://217.172.12.192:1026/v2/entities',
+  baseURL: `http://${serverIp}:${orionPort}/v2/entities`,
   headers: {
     'Content-Type': 'application/json',
     // 'Fiware-Service': 'a4blue',
@@ -13,7 +14,7 @@ const api = axios.create({
 });
 
 const apiFiware = axios.create({
-  baseURL: 'http://217.172.12.192:1026/v2/entities',
+  baseURL: `http://${serverIp}:${orionPort}/v2/entities`,
   headers: {
     'Content-Type': 'application/json',
     'Fiware-Service': 'a4blue',

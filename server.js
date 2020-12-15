@@ -11,6 +11,7 @@ let logger = require("./config/logger");
 
 // Connect Database
 //connectDB();
+
 //Define routes
 app.use('/api/kafka321', require('./kafka/321'));
 app.use('/api/kafka301', require('./kafka/301'));

@@ -92,4 +92,42 @@ const Dankmemes = () => {
     service: 'a4blue',
      id: 'urn:ngsi-ld:PERSEO_RULES_LIST:undefined',
      type: 'PERSEO_RULES_LIST' }
+
+
+
+let message={
+  "header": {
+    "topicName": "TOP321_FACE_RECO_DONE",
+    "topicVer1": 1,
+    "topicVer2": 0,
+    "msgId": "dummy_id_00001",
+    "sender": "FR",
+    "sentUtc": "2020-12-07 11:20:07.027843",
+    "status": "Test",
+    "msgType": "Update",
+    "source": "VMS",
+    "scope": "Restricted",
+    "caseId": "0"
+  },
+  "body": {
+    "attachment": [
+      {
+        "mimeType": "video/mp4",
+        "attachDesc": "New face detection results",
+        "objectStoreId": "5fce0fe648bfa87b5183958f",
+        "results": "{\"boxes\": [[0.6298507452011108, 0.7700653076171875, 0.7733434438705444, 0.9527148008346558]], \"scores\": [0.8909050226211548], \"class_names\": [\"Suspect 1\"], \"classes_id\": [11], \"timestamp_processing\": \"2020-12-07 11:20:05.570788\", \"ref_id\": [\"5f84381cbf5f11c52d871955\"], \"description\": [\"Person of interest: Suspect 1\"], \"processed_id\": \"5fce0fe648bfa87b5183957e\", \"frame_number\": \"\", \"deviceId\": \"cam-11\"}"
+      }
+    ],
+    "description": "A face was detected"
+  }
+}
+
+
+
+
+
+
+
+
+
 export default Dankmemes;

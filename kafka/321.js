@@ -3,6 +3,7 @@ var kafka = require('kafka-node');
 var rp = require('request-promise');
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
+const orionPort = config.orionPort;
 const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
@@ -44,7 +45,7 @@ consumer.on('message', function (message) {
   // console.log("TYPE IS " + typeof message);
 
   stringMessage = message.value;
-  //  console.log("STRING MESSAGE IN ONMESSAGE" + stringMessage); //  We will comment this for now
+  console.log("STRING MESSAGE IN ONMESSAGE " + stringMessage); //  We will comment this for now
   modifiedString = stringMessage
     .replace(/\\/g, '')
     .replace('"{"boxes', '{"boxes')
@@ -63,7 +64,7 @@ consumer.on('message', function (message) {
   //  .replace("],\"description",", \"description");
 
   //const modifiedObject = JSON.parse(modifiedString);
-  //console.log("MODIFIED STRING MESSAGE " + modifiedString);
+  console.log("MODIFIED STRING MESSAGE " + modifiedString);
   // console.log("Type is " + typeof modifiedString);
   modifiedObject = JSON.parse(modifiedString);
   modifiedObject.TimeInstant = new Date();
@@ -76,7 +77,7 @@ consumer.on('message', function (message) {
       //       'Fiware-Service': 'a4blue',
       //     'Fiware-ServicePath': '/a4blueevents'
     },
-    uri: `http://${serverIp}:1026/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, //modify
     // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
     resolveWithFullResponse: true,
   };
@@ -89,7 +90,7 @@ consumer.on('message', function (message) {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?options=keyValues`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities?options=keyValues`, //modify
     // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
     resolveWithFullResponse: true,
     json: true,
@@ -179,33 +180,32 @@ consumer.on('offsetOutOfRange', function (err) {
 //function that basically imitates the Visual Analysis Component
 function kafka321Test() {
   console.log('Sending 321 test..');
-  const message = {
-    header: {
-      topicName: 'TOP321_FACE_RECO_DONE',
-      topicVer1: 1,
-      topicVer2: 0,
-      msgId: 'dummy_id_00001',
-      sender: 'FR',
-      sentUtc: '2020-04-30 13:55:45.028748',
-      status: 'Test',
-      msgType: 'Update',
-      source: 'VMS',
-      scope: 'Restricted',
-      caseId: '44092dec-ebbb-44b5-b42b-6872f28c590d',
-    },
-    body: {
-      attachment: [
+const message={
+  "header":{
+     "topicName":"TOP321_FACE_RECO_DONE",
+     "topicVer1":1,
+     "topicVer2":0,
+     "msgId":"dummy_id_00001",
+     "sender":"FR",
+     "sentUtc":"2020-12-07 11:32:36.466892",
+     "status":"Test",
+     "msgType":"Update",
+     "source":"VMS",
+     "scope":"Restricted",
+     "caseId":"0"
+  },
+  "body":{
+     "attachment":[
         {
-          mimeType: 'video/mp4',
-          attachDesc: 'New face detection results',
-          objectStoreId: '5eaad8e0a73040a68e7bb894',
-          results:
-            '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.927463390827179], "class_names": ["El Chapo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-3"}',
-        },
-      ],
-      description: 'A face was detected',
-    },
-  };
+           "mimeType":"video/mp4",
+           "attachDesc":"New face detection results",
+           "objectStoreId":"5fce12d448bfa87b51841d05",
+           "results":"{\"boxes\": [[0.38138747215270996, 0.4890110194683075, 0.526846170425415, 0.6636412739753723]], \"scores\": [0.6505451083183289], \"class_names\": [\"Suspect5\"], \"classes_id\": [11], \"timestamp_processing\": \"2020-12-07 11:32:35.327134\", \"ref_id\": [\"5f843826bf5f11c52d871a9d\"], \"description\": [\"Person of interest: Suspect 1\"], \"processed_id\": \"5fce12d448bfa87b51841cf5\", \"frame_number\": \"\", \"deviceId\": \"cam-1\"}"
+        }
+     ],
+     "description":"A face was detected"
+  }
+}
 
   const stringMessage = JSON.stringify(message);
   //console.log(stringMessage);
@@ -264,8 +264,8 @@ function kafka321Test() {
   //     .catch(err => console.log("Error occured" + err));
 }
 
-//kafka321Test();
-
+//kafka321Test();  
+ 
 router.post('/perseoRule1', async (req, res) => {
   let id = req.body.id;
   let count;
@@ -278,7 +278,7 @@ router.post('/perseoRule1', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities/${id}?options=keyValues`, //modify
     // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
     resolveWithFullResponse: true,
   };
@@ -379,7 +379,7 @@ router.post('/perseoRule2', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`,
+    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`,
     resolveWithFullResponse: true,
   };
 
@@ -502,7 +502,7 @@ router.post('/perseoRule3', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
@@ -699,7 +699,7 @@ router.post('/perseoRule4', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
@@ -711,7 +711,7 @@ router.post('/perseoRule4', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP301_OBJECT_DETECT_DONE&options=keyValues&limit=1000`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP301_OBJECT_DETECT_DONE&options=keyValues&limit=1000`, //modify
 
     resolveWithFullResponse: true,
   };
@@ -900,10 +900,9 @@ router.post('/perseoRule4', async (req, res) => {
 });
 
 // automatically adds a new camera entity to Orion
-
 router.post('/addNewCamera', async (req, res) => {
   console.log(
-    'A new camera has been added with the following attributes : ' + req.body
+    'A new camera has been added with the following attributes : ' + JSON.stringify(req.body)
   );
   try {
     let id = `urn:ngsi-ld:IP_Camera:${req.body.id}`;
@@ -918,11 +917,12 @@ router.post('/addNewCamera', async (req, res) => {
         // 'Fiware-Service': 'a4blue',
         // 'Fiware-ServicePath': '/a4blueevents'
       },
-      uri: `http://${serverIp}:1026/v2/entities?type=IP_Camera&options=keyValues`,
+      uri: `http://${serverIp}:${orionPort}/v2/entities?type=IP_Camera&options=keyValues`,
       json: true,
       body: {
         id: id,
         type: req.body.type,
+        camDescription:req.body.camDescription,
         camLatitude: req.body.camLatitude,
         camLongitude: req.body.camLongitude,
       },
@@ -935,7 +935,7 @@ router.post('/addNewCamera', async (req, res) => {
       );
     } else if (res.statusCode === 422) {
       console.log(
-        `Camera with that id already exists in Orion, status code ${response.statusCode}`
+        `Camera with this id already exists in Orion, status code ${response.statusCode}`
       );
     }
     console.log(`Status code is ${response.statusCode}`);
@@ -943,7 +943,7 @@ router.post('/addNewCamera', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     // console.log(err);
-    //  res.status(500).send('Server Error');
+     res.status(500).send(err.message);
   }
 });
 
@@ -1027,7 +1027,7 @@ async function getAllFaceEntities() {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues`, //modify
+    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues`, //modify
     // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
     resolveWithFullResponse: true,
   };
@@ -1064,5 +1064,131 @@ async function getAllFaceEntities() {
     console.log(err.message);
   }
 }
+
+const objOld = {
+  header: {
+    topicName: 'TOP321_FACE_RECO_DONE',
+    topicVer1: 1,
+    topicVer2: 0,
+    msgId: 'dummy_id_00001',
+    sender: 'FR',
+    sentUtc: '2020-04-30 13:55:45.028748',
+    status: 'Test',
+    msgType: 'Update',
+    source: 'VMS',
+    scope: 'Restricted',
+    caseId: '44092dec-ebbb-44b5-b42b-6872f28c590d',
+  },
+  body: {
+    attachment: [
+      {
+        mimeType: 'video/mp4',
+        attachDesc: 'New face detection results',
+        objectStoreId: '5eaad8e0a73040a68e7bb894',
+        results:
+          '{"boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": [0.927463390827179], "class_names": ["El Chapo"], "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-3"}',
+      },
+    ],
+    description: 'A face was detected',
+  },
+};
+
+let objNew={
+  "header": {
+    "topicName": "TOP321_FACE_RECO_DONE",
+    "topicVer1": 1,
+    "topicVer2": 0,
+    "msgId": "dummy_id_00001",
+    "sender": "FR",
+    "sentUtc": "2020-12-07 11:20:07.027843",
+    "status": "Test",
+    "msgType": "Update",
+    "source": "VMS",
+    "scope": "Restricted",
+    "caseId": "0"
+  },
+  "body": {
+    "attachment": [
+      {
+        "mimeType": "video/mp4",
+        "attachDesc": "New face detection results",
+        "objectStoreId": "5fce0fe648bfa87b5183958f",
+        "results": "{\"boxes\": [[0.6298507452011108, 0.7700653076171875, 0.7733434438705444, 0.9527148008346558]], \"scores\": [0.8909050226211548], \"class_names\": [\"Suspect 1\"], \"classes_id\": [11], \"timestamp_processing\": \"2020-12-07 11:20:05.570788\", \"ref_id\": [\"5f84381cbf5f11c52d871955\"], \"description\": [\"Person of interest: Suspect 1\"], \"processed_id\": \"5fce0fe648bfa87b5183957e\", \"frame_number\": \"\", \"deviceId\": \"cam-11\"}"
+      }
+    ],
+    "description": "A face was detected"
+  }
+} 
+
+
+// console.log(typeof objNew)
+let modObjOld=JSON.parse(objOld.body.attachment[0].results);
+let modObjNew=JSON.parse(objNew.body.attachment[0].results);
+
+// console.log( modObjOld);
+// console.log( modObjOld);
+// console.log(typeof modObjNew.class_names);
+
+
+
+
+// let objNew1={
+//   "header":{
+//      "topicName":"TOP321_FACE_RECO_DONE",
+//      "topicVer1":1,
+//      "topicVer2":0,
+//      "msgId":"dummy_id_00001",
+//      "sender":"FR",
+//      "sentUtc":"2020-12-07 11:32:36.466892",
+//      "status":"Test",
+//      "msgType":"Update",
+//      "source":"VMS",
+//      "scope":"Restricted",
+//      "caseId":"0"
+//   },
+//   "body":{
+//      "attachment":[
+//         {
+//            "mimeType":"video/mp4",
+//            "attachDesc":"New face detection results",
+//            "objectStoreId":"5fce12d448bfa87b51841d05",
+//            "results":"{\"boxes\": [[0.38138747215270996, 0.4890110194683075, 0.526846170425415, 0.6636412739753723]], \"scores\": [0.8505451083183289], \"class_names\": [\"Suspect 1\"], \"classes_id\": [11], \"timestamp_processing\": \"2020-12-07 11:32:35.327134\", \"ref_id\": [\"5f843826bf5f11c52d871a9d\"], \"description\": [\"Person of interest: Suspect 1\"], \"processed_id\": \"5fce12d448bfa87b51841cf5\", \"frame_number\": \"\", \"deviceId\": \"cam-11\"}"
+//         }
+//      ],
+//      "description":"A face was detected"
+//   }
+// }
+
+// modifiedString = objNew1
+// .replace(/\\/g, '')
+// .replace('"{"boxes', '{"boxes')
+// .replace('"}"', '"') //we have changed this
+// .replace('"body":{', '')
+// .replace('detected"}', 'detected"')
+// .replace('"attachment":[{', '')
+// .replace('}]', '')
+// .replace('"results":{', '')
+// .replace('scores": [', 'scores": ')
+// .replace('], "class', ', "class')
+// .replace('class_names": [', 'class_names":  ')
+// .replace('], "classes_id', ' , "classes_id');
+
+// //  .replace("ref_id\": [","ref_id\": ")
+// //  .replace("],\"description",", \"description");
+
+// //const modifiedObject = JSON.parse(modifiedString);
+// console.log(typeof objNew1);
+
+
+// const msg={"header":{"topicName":"TOP321_FACE_RECO_DONE","topicVer1":1,"topicVer2":0,"msgId":"dummy_id_00001","sender":"FR","sentUtc":"2020-04-30 13:55:45.028748","status":"Test","msgType":"Update","source":"VMS","scope":"Restricted","caseId":"44092dec-ebbb-44b5-b42b-6872f28c590d"},"body":{"attachment":[{"mimeType":"video/mp4","attachDesc":"New face detection results","objectStoreId":"5eaad8e0a73040a68e7bb894","results":"{\"boxes\": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], \"scores\": [0.847463390827179], \"class_names\": [\"Suspect5\"], \"classes_id\": [8], \"timestamp_processing\": \"2020-04-30 13:55:44.237511\", \"ref_id\": [\"5e9af1237823974d0f3f0bee\"], \"suspect_description\": [\"The suspect has been charged with multiple crimes\"], \"processed_id\": \"5eaad8e0a73040a68e7bb881\", \"frame_number\": \"\", \"deviceId\": \"cam-10\"}"}],"description":"A face was detected"}}
+// // msg.replace('header','MARKANIIIIII');
+
+// const msg1={"header":{"topicName":"TOP321_FACE_RECO_DONE","topicVer1":1,"topicVer2":0,"msgId":"dummy_id_00001","sender":"FR","sentUtc":"2020-04-30 13:55:45.028748","status":"Test","msgType":"Update","source":"VMS","scope":"Restricted","caseId":"44092dec-ebbb-44b5-b42b-6872f28c590d"},"mimeType":"video/mp4","attachDesc":"New face detection results","objectStoreId":"5eaad8e0a73040a68e7bb894","boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": 0.927463390827179, "class_names":  "El Chapo" , "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-3","description":"A face was detected"}
+// console.log(typeof msg1)
+
+
+
+
+
 
 module.exports = router;

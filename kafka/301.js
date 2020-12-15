@@ -3,6 +3,7 @@ var kafka = require('kafka-node');
 var rp = require('request-promise');
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
+const orionPort = config.orionPort;
 const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
@@ -80,7 +81,7 @@ consumer.on('message', function (message) {
       //            "Fiware-Service": "a4blue",
       //          "Fiware-ServicePath": "/a4blueevents"
     },
-    uri: `http://${serverIp}:1026/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`,
+    uri: `http://${serverIp}:${orionPort}/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`,
     resolveWithFullResponse: true,
   };
 
@@ -92,7 +93,7 @@ consumer.on('message', function (message) {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:1026/v2/entities?options=keyValues`,
+    uri: `http://${serverIp}:${orionPort}/v2/entities?options=keyValues`,
     resolveWithFullResponse: true,
     json: true,
     body: modifiedObject,

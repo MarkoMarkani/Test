@@ -2,6 +2,7 @@ const kafka = require('kafka-node');
 const ffmpeg = require('fluent-ffmpeg');
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
+const orionPort = config.orionPort;
 const awsIp = config.awsIp;
 const { v4: uuidv4 } = require('uuid');
 var Producer = kafka.Producer,
