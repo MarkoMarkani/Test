@@ -4,12 +4,12 @@ var rp = require('request-promise');
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
 const orionPort = config.orionPort;
-const awsIp = config.awsIp;
+const kafkaIp = config.kafkaIp;
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    kafkaHost: `${awsIp}:9092`,
+    kafkaHost: `${kafkaIp}:9092`,
   }),
   producer = new Producer(client);
 

@@ -94,7 +94,7 @@ router.get('/getAllRules', async (req, res) => {
       console.log(err.name + err.message);
       return res.status(400).json('Error is present in adding Rule#1'); 
     }
-  });
+  }); 
 
 
 
@@ -200,7 +200,7 @@ router.post('/addSecondRule', async (req, res) => {
         'Fiware-Service': 'a4blue',
         'Fiware-ServicePath': '/a4blueevents',
       },
-      uri: `http://${serverIp}:9090/rules/`,
+      uri: `http://${serverIp}:9090/rules/`, 
       resolveWithFullResponse: true,
       json: true,
       body: {

@@ -3,11 +3,11 @@ const ffmpeg = require('fluent-ffmpeg');
 let config = require(`../config/config`);
 const serverIp = config.serverIp;
 const orionPort = config.orionPort;
-const awsIp = config.awsIp;
+const kafkaIp = config.kafkaIp;
 const { v4: uuidv4 } = require('uuid');
 var Producer = kafka.Producer,
   client = new kafka.KafkaClient({
-    kafkaHost: `${awsIp}:9092`, // Here should go internal AWS IP
+    kafkaHost: `${kafkaIp}:9092`, // Here should go internal AWS IP
   }),
   producer = new Producer(client);
 
@@ -93,24 +93,16 @@ async function sendStreamInfoToKafka(StreamPath, recordingName, streamStatus) {
   let fullStringMessage2;
 
   await getDeviceIdName(StreamPath).then(data=>deviceIdName=data);
-  console.log('DEVICE ID NAME IN SENDSTREAMTOKAFKA '+deviceIdName);
+  console.log('Device id in sendStreamToKafka '+deviceIdName);
 
   let fullBodyMessage = {
     deviceId: deviceIdName,
-
     streamStatus: streamStatus ? 'ENDED' : 'STARTED',
-
-    streamUrl: `rtmp://${awsIp}:8002` + StreamPath, 
-
-//Commented for now, because we disabled recording on AWS
-    // recordingPath: recordingName
-    //   ? `${process.cwd()}/recordings/` + recordingName
-    //   : '', //this will be dynamic modify
-
-    recordingPath:`${process.cwd()}/recordings/` + recordingName,
-
+    streamUrl: `rtmp://${serverIp}:8002` + StreamPath, 
+    recordingPath:`${process.cwd()}/recordings/${recordingName}`,
     platform: `Body worn camera`,
   };
+
   fullMessage2 = {
     header: {
       topicName: 'TOP401_IOT_PROPAGATE_EVENT',
