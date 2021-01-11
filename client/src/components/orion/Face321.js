@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-// import axios from 'axios';
 import { Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { get321Entities } from '../../actions/orion';
@@ -18,61 +17,34 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
   const [activeCamera, setActiveCamera] = React.useState(null);
   const [paramData, setParam] = useState({
     nameParam: '',
+    scoresParam: 0
   });
 
   useEffect(() => {
     get321Entities();
   }, [get321Entities]);
   
-  // const api = axios.create({
-  //   baseURL: 'http://217.172.12.192:1026/v2/entities',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   resolveWithFullResponse: true,
-  // });
 
-  // const getCameraEntities = async () => {
-  //   try {
-  //     return await api.get('?options=keyValues&limit=1000&type=IP_Camera');
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-  // const cameraEntities = getCameraEntities().then((e) =>  e.data);
-  //console.log(cameraEntities);
-
-
-  const { nameParam } = paramData;
+  const { nameParam, scoresParam } = paramData;
   const onChange = (e) =>
     setParam({ ...paramData, [e.target.name]: e.target.value });
 
-    // const reversedEntities=entities.reverse();
+  
     const indexOfLastEntity = currentPage * entitiesPerPage;
     const indexOfFirstEntity = indexOfLastEntity - entitiesPerPage;
     const currentEntities = entities.slice(indexOfFirstEntity, indexOfLastEntity);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-  // const uniqueValues = [
-  //   ...new Set(
-  //     entities.map(
-  //       (entity) =>
-  //         entity.deviceId + ' ' + entity.camLatitude + ' ' + entity.camLongitude
-  //     )
-  //   ),
-  // ];
-  //const uniqueValuesArray = uniqueValues.map((entity) => entity.split(' '));
-
-  //console.log(uniqueValues);
-
+    const filteredEntities=entities
+    .filter((entity) => entity.class_names === nameParam && entity.scores > scoresParam);
  
   const entitiesWithMatchingName = nameParam
     ? entities.filter((entity) => entity.class_names === nameParam)
     : entities;
-  console.log(entitiesWithMatchingName);
+ 
 
-  const mappedEntities = (entity) => (
+  const showEntitiesList = (entity) => (
     <ul className='entityList' key={entity.id}>
       <li>
         <p>
@@ -110,7 +82,7 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
     </ul>
   );
 
-  const maps = (entity) => (
+  const showOnMap = (entity) => (
     <Fragment key={entity.id}>
       <Marker
         position={[entity.camLatitude, entity.camLongitude]}
@@ -164,6 +136,19 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
           />
         </label>
       </p>
+      <p>
+        <label>
+          Filter by the percentage
+          <input
+            className='search-box'
+            type='text'
+            name='scoresParam'
+            placeholder='Enter detection percentage'
+            value={scoresParam}
+            onChange={onChange}
+          />
+        </label>
+      </p>
       <Map center={[52.370216,4.895168]} zoom={12}>
         <TileLayer
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -172,8 +157,8 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
         {!nameParam
           ? null//entities.map((entity) => maps(entity)) we will return this
           : entities
-              .filter((entity) => entity.class_names === nameParam)
-              .map((entity) => maps(entity))}
+              .filter((entity) => entity.class_names === nameParam && entity.scores > scoresParam)
+              .map((entity) => showOnMap(entity))}
         {activeCamera && (
           <Popup
             position={[activeCamera.camLatitude, activeCamera.camLongitude]}
@@ -193,17 +178,17 @@ const Face321 = ({ orion: { entities }, get321Entities }) => {
       </Map>
       <h3>Face Reco list</h3>
       <div>
-        {!nameParam
-          ? currentEntities.map((entity) => mappedEntities(entity))
-          : currentEntities
-              .filter((entity) => entity.class_names === nameParam)
-              .map((entity) => mappedEntities(entity))}
+        {nameParam==''
+          ? currentEntities.map((entity) => showEntitiesList(entity))
+          : entities
+              .filter((entity) => entity.class_names === nameParam && entity.scores > scoresParam)
+              .map((entity) => showEntitiesList(entity))}
       </div>
-      <Pagination
-        postsPerPage={entitiesPerPage}
-        totalPosts={entities.length}
+      {filteredEntities.length==0&&<Pagination
+        entitiesPerPage={entitiesPerPage}
+        totalEntities={entities.length}
         paginate={paginate}
-      />
+      />}
     </div>
   );
 };

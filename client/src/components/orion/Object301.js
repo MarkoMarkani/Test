@@ -12,7 +12,6 @@ const Object301 = ({ orion: { entities }, get301Entities }) => {
     get301Entities();
   }, [get301Entities]);
 
-  // const reversedEntities=entities.reverse();
   const indexOfLastEntity = currentPage * entitiesPerPage;
   const indexOfFirstEntity = indexOfLastEntity - entitiesPerPage;
   const currentEntities = entities.slice(indexOfFirstEntity, indexOfLastEntity);
@@ -20,7 +19,7 @@ const Object301 = ({ orion: { entities }, get301Entities }) => {
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
 
- // console.log(entities);
+
   return (
     <div className='wrapper'>
       <h3>Object Detect list</h3>

@@ -1,6 +1,6 @@
 /* Global Styles */
 :root {
-  --primary-color: #5d8cae;
+  --primary-color: #b3b3b3;
   --dark-color: #343a40;
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
@@ -18,14 +18,18 @@ body {
   font-family: 'Raleway', sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
-  background-color: var(--ultradark-color);
-  color: #fff;
+  background-color: var(--light-color);
+  color: var(--dark-color);
 }
 
 a {
-  color: #fff;
+  color: var(--dark-color);
   text-decoration: none;
   font-size: 1.1rem;
+}
+
+a span {
+  color: var(--light-color);
 }
 
 a:hover {
@@ -37,6 +41,11 @@ ul {
   /* list-style: none; */
 }
 
+li {
+  list-style-type: none;
+}
+
+
 img {
   width: 100%;
 }
@@ -47,13 +56,17 @@ h3 {
 
 label {
   font-size: 0.8em;
-  color: var(--light-color);
+  color: var(--dark-color);
   margin-left: 1em;
 }
 .wrapper h3 {
-  color: white;
+  color: var(--dark-color);
   padding-left: 0.5em;
   padding-bottom: 0.5em;
+}
+
+th{
+  font-size:1.2rem;
 }
 
 /* Utilities */
@@ -61,7 +74,7 @@ label {
   max-width: 60%;
   margin: auto;
   overflow: hidden;
-  background: var(--ultradark-color);
+  background: var(--light-color);
   padding: 2rem;
   margin-right: 10%;
   margin-top: 2rem;
@@ -103,6 +116,15 @@ body {
   margin-left: 2rem;
   font-size: 2rem;
   background: none;
+}
+
+.menu-bars-admin {
+  margin-right: 1rem;
+  background: none;
+}
+
+.menu-bars-admin:hover {
+color:var(--primary-color);
 }
 
 .nav-menu {
@@ -175,7 +197,7 @@ p.ruleName {
   border-radius: 0.5em;
 }
 .entityList li {
-  border: 0.2em solid var(--dark-color);
+  border: 0.2em solid var(--light-color);
   padding: 1em;
   overflow: auto;
   border-radius: 0.5em;
@@ -192,12 +214,8 @@ p.ruleName {
 }
 
 .entityList li p span {
-  color: black;
+  color: var(--light-color);
   font-size: 1em;
-}
-
-th{
-  font-size:1.2rem;
 }
 
 #overview {
@@ -211,7 +229,7 @@ th{
 #overview td {
   border: 1px solid var(--light-color);
   padding: 8px;
-  background-color: var(--dark-color);
+  background-color: var(--primary-color);
 }
 
 #overview th {
@@ -256,8 +274,12 @@ input.search-box {
   font-size: 1.1rem;
   cursor: pointer;
   border-radius: 0.4rem;
-  background-color: var(--primary-color);
+  background-color: var(--dark-color);
   color: var(--light-color);
+}
+
+.btnPrimary:hover {
+  color: var(--primary-color);
 }
 
 .btnDark {
@@ -333,9 +355,6 @@ ul.pagination {
   margin-top :0.6rem;
 }
 
-li {
-  list-style-type: none;
-}
 
 a.page-link {
 display: flex;
@@ -343,5 +362,7 @@ font-size: 1.3rem;
 margin: 0.2rem;
 overflow: auto;
 }
+
+
 
 

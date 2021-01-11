@@ -10,7 +10,7 @@ const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId, match }) => {
 
   const [paramData, setParam] = useState({
     nameParam: '',
-    scoresParam: 0,
+    scoresParam: 0
   });
 
   const { nameParam, scoresParam } = paramData;
@@ -21,7 +21,7 @@ const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId, match }) => {
 
 
 
-  const mappedEntities = (entity) => (
+  const showEntitiesList = (entity) => (
     <ul className='entityList' key={entity.id}>
       <li>
         <p>
@@ -94,13 +94,13 @@ const Cameras = ({ orion: { entities }, get321EntitiesByDeviceId, match }) => {
         { !nameParam 
           ? entities
               .filter((entity) => entity.deviceId === params && entity.scores > scoresParam)
-              .map((entity) => mappedEntities(entity))
+              .map((entity) => showEntitiesList(entity))
           : entities
               .filter(
                 (entity) =>
                   entity.deviceId === params && entity.class_names === nameParam && entity.scores > scoresParam
               )
-              .map((entity) => mappedEntities(entity))}
+              .map((entity) => showEntitiesList(entity))}
       </div>
     </div>
   );

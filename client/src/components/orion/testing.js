@@ -83,7 +83,7 @@ const Dankmemes = () => {
 
 { id: '5fb7ab5416a9050006a97aab',
     name: 'Perseo321FaceRuleUpdateSecondWithTime',
-     text:'select "Perseo321FaceRuleUpdateSecondWithTime" as ruleName, *, ev.id? as id, ev.class_names? as class_names,  ev.scores? as scores, ev.deviceId? as deviceId, ev.camLatitude? as camLatitude, ev.camLongitude? as camLongitude, count(*) as count from pattern [every ev=iotEvent(cast(cast(camLatitude?,string),float) between 52.359318 and 52.380280, cast(cast(camLongitude?,string),float) between 4.877461 and 4.929934, cast(cast(scores?,string),float) between 0.81 and 0.99, cast(class_names?,string) like "Suspect2" and type="TOP321_FACE_RECO_DONE")].win:time(1 day) as timePeriod group by ev.class_names? having count(ev.class_names?) > 1',
+    text:'select "Perseo321FaceRuleUpdateSecondWithTime" as ruleName, *, ev.id? as id, ev.class_names? as class_names,  ev.scores? as scores, ev.deviceId? as deviceId, ev.camLatitude? as camLatitude, ev.camLongitude? as camLongitude, count(*) as count from pattern [every ev=iotEvent(cast(cast(camLatitude?,string),float) between 52.359318 and 52.380280, cast(cast(camLongitude?,string),float) between 4.877461 and 4.929934, cast(cast(scores?,string),float) between 0.81 and 0.99, cast(class_names?,string) like "Suspect2" and type="TOP321_FACE_RECO_DONE")].win:time(1 day) as timePeriod group by ev.class_names? having count(ev.class_names?) > 1',
     action:
       { type: 'post',
         template: '{ ${id},${camLatitude}}',

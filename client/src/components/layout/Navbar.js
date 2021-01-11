@@ -19,7 +19,11 @@ const Navbar = () => {
           <Link to='#' className='menu-bars'>
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
+
           <h2>CONNEXIONs</h2>
+          <Link to='/overview' className='menu-bars-admin'>
+            Admin Dashboard
+          </Link>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
           <ul className='nav-menu-items' onClick={showSidebar}>

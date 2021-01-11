@@ -17,7 +17,7 @@ const RulesList = ({ perseo: { rules }, getAllRules }) => {
         <ul className='entityList' key={idx}>
           <li>
             <p className="ruleName">{JSON.stringify(rule.name)}</p>
-            <p>{JSON.stringify(rule.text)}</p>
+            {/* <p>{JSON.stringify(rule.text)}</p> */}
           </li>
         </ul>
       ))}

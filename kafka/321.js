@@ -41,11 +41,11 @@ consumer.on('message', function (message) {
   let stringMessage;
   let modifiedObject;
   let deviceId;
-  // console.log("THIS IS LOGGED MESSAGE "+JSON.stringify(message));
-  // console.log("TYPE IS " + typeof message);
+  // console.log("This is logged message "+JSON.stringify(message));
+  // console.log("Type of the message is " + typeof message);
 
   stringMessage = message.value;
-  console.log("STRING MESSAGE IN ONMESSAGE " + stringMessage); //  We will comment this for now
+  //console.log("STRING MESSAGE IN ONMESSAGE " + stringMessage); //  We will comment this for now
   modifiedString = stringMessage
     .replace(/\\/g, '')
     .replace('"{"boxes', '{"boxes')
@@ -77,8 +77,7 @@ consumer.on('message', function (message) {
       //       'Fiware-Service': 'a4blue',
       //     'Fiware-ServicePath': '/a4blueevents'
     },
-    uri: `http://${serverIp}:${orionPort}/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, //modify
-    // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
+    uri: `http://${serverIp}:${orionPort}/v2/entities/urn:ngsi-ld:IP_Camera:${deviceId}?type=IP_Camera&options=keyValues`, 
     resolveWithFullResponse: true,
   };
 
@@ -90,15 +89,14 @@ consumer.on('message', function (message) {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:${orionPort}/v2/entities?options=keyValues`, //modify
-    // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
+    uri: `http://${serverIp}:${orionPort}/v2/entities?options=keyValues`, 
     resolveWithFullResponse: true,
     json: true,
     body: modifiedObject,
   };
 
   //}
-  //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`)
+  //console.log(`Message scores are ${ JSON.stringify(modifiedObject.scores)}`)
   if (modifiedObject.count === undefined) {
     rp(options1)
       .then((res) => {
@@ -177,6 +175,7 @@ consumer.on('offsetOutOfRange', function (err) {
 //     // result is an array of any errors if a given topic could not be created
 // });
 
+
 //function that basically imitates the Visual Analysis Component
 function kafka321Test() {
 console.log('Sending 321 test..');
@@ -208,29 +207,11 @@ const message={
 }
 
   const stringMessage = JSON.stringify(message);
-  //console.log(stringMessage);
-  const modifiedString = stringMessage
-    .replace(/\\/g, '')
-    .replace('"{"boxes', '{"boxes')
-    .replace('"}"', '"') //we have changed this
-    .replace('"body":{', '')
-    .replace('detected"}', 'detected"')
-    .replace('"attachment":[{', '')
-    .replace('}]', '')
-    .replace('"results":{', '')
-    .replace('scores": [', 'scores": ')
-    .replace('], "class', ', "class')
-    .replace('class_names": [', 'class_names":  ')
-    .replace('], "classes_id', ' , "classes_id');
-  //  .replace("ref_id\": [","ref_id\": ")
-  //  .replace("],\"description",", \"description");
 
-  const modifiedObject = JSON.parse(modifiedString);
-  //console.log("STRING MESSAGE   " + modifiedString);
 
   payloads = [
     {
-      topic: 'TOP321_FACE_RECO_DONE', //BILO JE 401
+      topic: 'TOP321_FACE_RECO_DONE', 
       messages: stringMessage,
       partition: 0,
       timestamp: Date.now(),
@@ -243,25 +224,6 @@ const message={
     console.log('Kafka321Test data ' + JSON.stringify(data));
   });
 
-  //Options we are not currently using
-  // const options = {
-  //     method: "POST",
-  //     headers: {
-  //         "Access-Control-Allow-Origin": "*",
-  //         "Content-Type": "application/json"
-  //     },
-  //     //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
-  //     uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
-  //     resolveWithFullResponse: true,
-  //     json: true,
-  //     body: modifiedObject
-  // };
-
-  //}
-  //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`);
-  // rp(options)
-  //     .then(res => console.log("Successfully stored " + JSON.stringify(res)))
-  //     .catch(err => console.log("Error occured" + err));
 }
  
 //kafka321Test();   
@@ -278,8 +240,7 @@ router.post('/perseoRule1', async (req, res) => {
       'Fiware-Service': 'a4blue',
       'Fiware-ServicePath': '/a4blueevents',
     },
-    uri: `http://${serverIp}:${orionPort}/v2/entities/${id}?options=keyValues`, //modify
-    // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
+    uri: `http://${serverIp}:${orionPort}/v2/entities/${id}?options=keyValues`, 
     resolveWithFullResponse: true,
   };
 
@@ -733,7 +694,7 @@ router.post('/perseoRule4', async (req, res) => {
         entity.camLongitude >= req.body.minLongitude &&
         entity.camLongitude <= req.body.maxLongitude
     );
-    //console.log("OBJECT ENTITIES" + JSON.stringify(allObjectEntities));
+    //console.log("Object entities " + JSON.stringify(allObjectEntities));
     console.log(
       'Object entities length in last hour is ' +
         allObjectEntitiesInLast1Hour.length
@@ -948,123 +909,8 @@ router.post('/addNewCamera', async (req, res) => {
   }
 });
 
-//not using this for now
-async function addperseoRuleSecond() {
-  const options = {
-    method: 'POST',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      'Fiware-Service': 'a4blue',
-      'Fiware-ServicePath': '/a4blueevents',
-    },
-    //uri: `http://${serverIp}:9090/rules`, //modify
-    uri: 'https://webhook.site/448a7385-762f-448c-884e-8410b12b8725',
-    json: true,
-    body: {
-      name: 'Perseo321FaceRuleUpdateSecond',
-      text:
-        'select *, ev.id? as id, ev.class_names? as class_names, ev.camLatitude? as camLatitude, ev.camLongitude? as camLongitude, count(*) as count from pattern [every ev=iotEvent(cast(cast(camLatitude?,string),float) between 20.000000 and 20.000100, cast(cast(camLongitude?,string),float) between 40.000000 and 40.000100, cast(class_names?,string) like "Ronaldo" and type="TOP321_FACE_RECO_DONE")].win:time(1 day) group by ev.class_names? having count(ev.class_names?) > 1',
-      action: {
-        type: 'post',
-        template: '{ ${id},${positionx}}',
-        parameters: {
-          url: 'http://217.172.12.192:5000/api/kafka321/perseoRule2',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'Fiware-Service': 'a4blue',
-            'Fiware-ServicePath': '/a4blueevents',
-          },
-          qs: {
-            id: '${id}',
-          },
-          json: {
-            id: '${id}',
-            camLatitude: '${camLatitude}',
-            camLongitude: '${camLongitude}',
-            class_names: '${class_names}',
-            count: '${count}',
-          },
-        },
-      },
-    },
-    resolveWithFullResponse: true,
-  };
-  let res = await rp(options);
-  if (res.statusCode === 200) {
-    console.log(
-      `Rule #2 has been posted to perseo with status code ${res.statusCode}`
-    );
-  } else {
-  }
-}
-
-//addperseoRuleSecond();
-
-//not using this for now
 
 
-//not using this for now
-async function getAllFaceEntities() {
-  let allEntities;
-  let allTimeInstants;
-  let formattedTimeInstant;
-  let dateNow = new Date();
-  let dateMinus1Hour = new Date(dateNow.setHours(dateNow.getHours() - 1));
-  let dateMinus6Hours = new Date(dateNow.setHours(dateNow.getHours() - 6));
-  let filter1Hour;
-  let filter6Hours;
-  //dateNow.setMinutes( dateNow.getMinutes() - 20 );
-  //console.log(someDate);
-  //console.log(dateNow);
-  //if(someDate<dateNow){console.log("It is alive");}
-  const optionsGetAll321Entities = {
-    method: 'GET',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      // "Content-Type": "application/json",
-      'Fiware-Service': 'a4blue',
-      'Fiware-ServicePath': '/a4blueevents',
-    },
-    uri: `http://${serverIp}:${orionPort}/v2/entities?type=TOP321_FACE_RECO_DONE&options=keyValues`, //modify
-    // uri: "https://webhook.site/448a7385-762f-448c-884e-8410b12b8725",
-    resolveWithFullResponse: true,
-  };
-
-  try {
-    let res = await rp(optionsGetAll321Entities);
-    // if (res.statusCode === 200) { console.log(`Orion Camera Entity has fetched with status code ${res.statusCode}`);
-    allEntities = JSON.parse(res.body);
-    //console.log(allEntities.TimeInstant);
-    allTimeInstants = allEntities.map(
-      (entity) => entity.TimeInstant + entity.camLongitude
-    );
-    //}
-    console.log(allTimeInstants);
-    formattedTimeInstant = allTimeInstants.map(
-      (oneTimeInstant) => new Date(oneTimeInstant)
-    );
-    filter1Hour = allTimeInstants.filter(
-      (timeInstant) => new Date(timeInstant) > dateMinus1Hour
-    ); //and position
-    filter6Hours = allTimeInstants.filter(
-      (timeInstant) =>
-        new Date(timeInstant) > dateMinus6Hours &&
-        new Date(timeInstant) < dateMinus1Hour
-    ); //and position
-    //console.log(filter1Hour.length);
-    //console.log(filter6Hours.length);
-    //console.log(formattedTimeInstant);
-    //console.log(dateMinus1Hour);
-    // if (formattedTimeInstant > dateMinus1Hour) {
-    //     console.log("evo nas");
-    // }
-  } catch (err) {
-    console.log(err.message);
-  }
-}
 
 const objOld = {
   header: {
@@ -1186,10 +1032,5 @@ let modObjNew=JSON.parse(objNew.body.attachment[0].results);
 
 // const msg1={"header":{"topicName":"TOP321_FACE_RECO_DONE","topicVer1":1,"topicVer2":0,"msgId":"dummy_id_00001","sender":"FR","sentUtc":"2020-04-30 13:55:45.028748","status":"Test","msgType":"Update","source":"VMS","scope":"Restricted","caseId":"44092dec-ebbb-44b5-b42b-6872f28c590d"},"mimeType":"video/mp4","attachDesc":"New face detection results","objectStoreId":"5eaad8e0a73040a68e7bb894","boxes": [[0.3163111209869385, 0.3704342544078827, 0.4800548553466797, 0.4447254240512848]], "scores": 0.927463390827179, "class_names":  "El Chapo" , "classes_id": [8], "timestamp_processing": "2020-04-30 13:55:44.237511", "ref_id": ["5e9af1237823974d0f3f0bee"], "suspect_description": ["The suspect has been charged with multiple crimes"], "processed_id": "5eaad8e0a73040a68e7bb881", "frame_number": "", "deviceId": "cam-3","description":"A face was detected"}
 // console.log(typeof msg1)
-
-
-
-
-
 
 module.exports = router;

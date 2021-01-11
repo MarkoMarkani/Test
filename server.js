@@ -5,12 +5,13 @@ let app = express();
 app.use(express.json());
 const path = require('path');
 let config=require(`./config/config`);
-let connectDB = require('./config/db');
+let connectMongo = require('./config/db');
+let connectOracle = require('./config/db');
 let logger = require("./config/logger");
 
-
 // Connect Database
-//connectDB();
+//connectMongo();
+//connectOracle();
 
 //Define routes
 app.use('/api/kafka321', require('./kafka/321'));

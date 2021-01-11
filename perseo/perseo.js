@@ -210,7 +210,7 @@ router.post('/addSecondRule', async (req, res) => {
           "type":"post",
           "template":"{ ${id},${camLatitude}}", 
           "parameters":{
-             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule2",
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule3",
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",
@@ -287,7 +287,7 @@ router.post('/addSecondRule', async (req, res) => {
           "type":"post",
           "template":"{ ${id},${camLatitude}}", 
           "parameters":{
-             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule2",
+             "url": "http://"+serverIp+":5000/api/kafka321/perseoRule4",
              "method": "POST",
              "headers": {
                 "Content-Type":"application/json",

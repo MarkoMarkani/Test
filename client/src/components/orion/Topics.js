@@ -4,10 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 const Topics = ({ orion: { Topics }, getAllTopics }) => {
-//   useEffect(() => {
-//     getAllTopics();
-//   }, [getAllTopics]);
-//   console.log(Topics);
+
   return (
     <div className='wrapper'>
       <h3>Topics list</h3>

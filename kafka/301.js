@@ -40,14 +40,14 @@ producer.on('error', function (err) {
 consumer.on('message', function (message) {
   let id;
   let modifiedString;
-  let stringMessage;
+  let stringMessage; 
   let modifiedObject;
   let deviceId;
-  // console.log("THIS IS LOGGED MESSAGE "+JSON.stringify(message));
-  // console.log("TYPE IS " + typeof message);
+  // console.log("This is logged message "+JSON.stringify(message));
+  // console.log("Type of the message is " + typeof message);
 
   stringMessage = message.value;
-  //  console.log("STRING MESSAGE IN ONMESSAGE" + stringMessage); //  We will comment this for now
+  //  console.log("String message in onMessage " + stringMessage); //  We will comment this for now
   modifiedString = stringMessage
     .replace(/\\/g, '')
     .replace('"{"boxes', '{"boxes')
@@ -66,8 +66,8 @@ consumer.on('message', function (message) {
   //  .replace("],\"description",", \"description");
 
   //const modifiedObject = JSON.parse(modifiedString);
-  //console.log("MODIFIED STRING MESSAGE " + modifiedString);
-  //   console.log("Type is " + typeof modifiedString);
+  //console.log("Modifien string message is " + modifiedString);
+  //console.log("Type of the modifiedString is " + typeof modifiedString);
   modifiedObject = JSON.parse(modifiedString);
   modifiedObject.id = 'urn:ngsi-ld:TOP301_OBJECT_DETECT_DONE:' + uuidv4();
   modifiedObject.type = 'TOP301_OBJECT_DETECT_DONE';
@@ -100,7 +100,7 @@ consumer.on('message', function (message) {
   };
 
   //}
-  //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`)
+  //console.log(`Message scores are ${ JSON.stringify(modifiedObject.scores)}`)
   if (modifiedObject.count === undefined) {
     rp(options1)
       .then((res) => {
@@ -117,35 +117,6 @@ consumer.on('message', function (message) {
         // let id = res.headers.location.split("/")[3].split("?")[0];
         // return id;
       })
-      // .then((id) => {
-      //     console.log(id);
-      //     const optionsFiwareGetById = {
-      //         method: "GET",
-      //         headers: {
-      //             "Access-Control-Allow-Origin": "*",
-      //             "Fiware-Service": "a4blue",
-      //             "Fiware-ServicePath": "/a4blueevents"
-      //         },
-      //         uri: `http://${serverIp}:1026/v2/entities/${id}?options=keyValues`, //modify
-      //         // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
-      //         resolveWithFullResponse: true
-      //     };
-      //     const optionsWebhookGetById = {
-      //         method: "GET",
-      //         headers: {
-      //             "Access-Control-Allow-Origin": "*",
-      //             "Fiware-Service": "a4blue",
-      //             "Fiware-ServicePath": "/a4blueevents"
-      //         },
-      //         uri: `http://${serverIp}:1026/v2/entities/${id}/raw`, //modify
-      //         // uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
-      //         resolveWithFullResponse: true
-      //     };
-      //     return rp(optionsFiwareGetById);
-      // })
-      // .then((res) => {
-      //     console.log(`This is response body ${res.body}`);
-      // })
       .catch((err) => {
         console.log(`On Message : Error is ${err}`);
       });
@@ -193,29 +164,11 @@ function kafka301Test() {
   };
 
   const stringMessage = JSON.stringify(message);
-  //console.log(stringMessage);
-  const modifiedString = stringMessage
-    .replace(/\\/g, '')
-    .replace('"{"boxes', '{"boxes')
-    .replace('"}"', '"') //we have changed this
-    .replace('"body":{', '')
-    .replace('detected"}', 'detected"')
-    .replace('"attachment":[{', '')
-    .replace('}]', '')
-    .replace('"results":{', '')
-    .replace('scores": [', 'scores": ')
-    .replace('], "class', ', "class')
-    .replace('class_names": [', 'class_names":  ')
-    .replace('], "classes_id', ' , "classes_id');
-  //  .replace("ref_id\": [","ref_id\": ")
-  //  .replace("],\"description",", \"description");
 
-  //const modifiedObject = JSON.parse(modifiedString);
-  //console.log("STRING MESSAGE   " + modifiedString);
 
   payloads = [
     {
-      topic: 'TOP301_OBJECT_DETECT_DONE', //BILO JE 401
+      topic: 'TOP301_OBJECT_DETECT_DONE', 
       messages: stringMessage,
       partition: 0,
       timestamp: Date.now(),
@@ -228,25 +181,7 @@ function kafka301Test() {
     console.log('Kafka 301 Test data ' + JSON.stringify(data));
   });
 
-  //options we are not currently using
-  // const options = {
-  //     method: "POST",
-  //     headers: {
-  //         "Access-Control-Allow-Origin": "*",
-  //         "Content-Type": "application/json"
-  //     },
-  //     //uri: "http://localhost:1026/v2/entities?options=keyValues", //this is a valid one  //modify
-  //     uri: "https://webhook.site/730596d0-ed07-4f32-b20c-084592ac120c",
-  //     resolveWithFullResponse: true,
-  //     json: true,
-  //     body: modifiedObject
-  // };
 
-  //}
-  //console.log(`MESSAGE RESULTS ${ JSON.stringify(modifiedObject.scores)}`);
-  // rp(options)
-  //     .then(res => console.log("Successfully stored " + JSON.stringify(res)))
-  //     .catch(err => console.log("Error occured" + err));
 }
 
 //kafka301Test();
